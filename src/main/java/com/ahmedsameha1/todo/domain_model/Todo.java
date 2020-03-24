@@ -1,6 +1,7 @@
 package com.ahmedsameha1.todo.domain_model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class Todo extends BaseEntity {
     private String description;
     private LocalDate targetDate;
