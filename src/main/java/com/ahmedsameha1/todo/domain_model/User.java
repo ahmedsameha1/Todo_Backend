@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.time.LocalDate;
@@ -25,6 +26,10 @@ public class User extends BaseEntity implements UserDetails {
     private Gender gender;
     @OneToMany(mappedBy = "user")
     private List<Todo> todos;
+    private boolean enabled;
+    private boolean locked;
+    private boolean expired;
+    private boolean credentialsExpired;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -33,21 +38,21 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return !expired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !locked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return !credentialsExpired;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }
