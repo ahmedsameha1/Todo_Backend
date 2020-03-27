@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,20 +18,49 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity implements UserDetails {
+    @NotBlank
+    @Size(min = 1, max = 50)
     @Column(unique = true, nullable = false)
     private String username;
+    @NotBlank
+    @Size(min = 8, max = 255)
+    @Column(nullable = false)
     private String password;
+    @NotBlank
+    @Size(min = 1, max = 100)
+    @Column(nullable = false)
     private String firstName;
+    @NotBlank
+    @Size(min = 1, max = 100)
+    @Column(nullable = false)
     private String lastName;
+    @NotBlank
+    @Size(min = 5, max = 100)
+    @Email
+    @Column(nullable = false)
     private String email;
+    @NotNull
+    @Past
+    @Column(nullable = false)
     private LocalDate birthDay;
-    private Gender gender;
+    @NotNull
+    @Column(nullable = false)
+    private Gender gender = Gender.UNSPECIFIED;
+    @NotNull
     @OneToMany(mappedBy = "user")
-    private List<Todo> todos;
-    private boolean enabled;
-    private boolean locked;
-    private boolean expired;
-    private boolean credentialsExpired;
+    private List<Todo> todos = Collections.emptyList();
+    @NotNull
+    @Column(nullable = false)
+    private boolean enabled = false;
+    @NotNull
+    @Column(nullable = false)
+    private boolean locked = false;
+    @NotNull
+    @Column(nullable = false)
+    private boolean expired = false;
+    @NotNull
+    @Column(nullable = false)
+    private boolean credentialsExpired = false;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
