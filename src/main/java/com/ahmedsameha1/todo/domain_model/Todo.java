@@ -1,12 +1,8 @@
 package com.ahmedsameha1.todo.domain_model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -33,4 +29,10 @@ public class Todo extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Version
+    @Setter(value = AccessLevel.PRIVATE)
+    @Getter(value = AccessLevel.PRIVATE)
+    @Column(nullable = false)
+    private long version = 0L;
 }

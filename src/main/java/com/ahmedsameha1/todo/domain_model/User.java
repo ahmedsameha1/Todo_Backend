@@ -1,13 +1,13 @@
 package com.ahmedsameha1.todo.domain_model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.Version;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -72,6 +72,12 @@ public class User extends BaseEntity implements UserDetails {
     @NotNull
     @Column(nullable = false)
     private boolean credentialsExpired = false;
+
+    @Version
+    @Setter(value = AccessLevel.PRIVATE)
+    @Getter(value = AccessLevel.PRIVATE)
+    @Column(nullable = false)
+    private long version = 0L;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
