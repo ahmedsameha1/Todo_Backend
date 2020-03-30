@@ -28,7 +28,7 @@ public class Todo extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserAccount userAccount;
 
     @Version
     @Setter(value = AccessLevel.PRIVATE)

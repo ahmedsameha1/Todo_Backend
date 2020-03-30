@@ -17,7 +17,7 @@ import java.util.List;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class User extends BaseEntity implements UserDetails {
+public class UserAccount extends BaseEntity implements UserDetails {
     @NotBlank
     @Size(min = 1, max = 50)
     @Column(unique = true, nullable = false)
