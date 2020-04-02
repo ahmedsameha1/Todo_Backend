@@ -55,6 +55,6 @@ create table todo (
     ),
     target_date date not null check(target_date > current_date),
     is_done boolean default false,
-    user_id uuid not null references user_account(id),
+    user_account_id uuid not null references user_account(id),
     version bigint default 0
 );
