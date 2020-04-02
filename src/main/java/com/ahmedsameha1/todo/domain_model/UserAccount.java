@@ -52,7 +52,7 @@ public class UserAccount extends BaseEntity implements UserDetails {
     private Gender gender = Gender.UNSPECIFIED;
 
     @NotNull
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "userAccount")
     private List<Todo> todos = Collections.emptyList();
 
     @NotNull
