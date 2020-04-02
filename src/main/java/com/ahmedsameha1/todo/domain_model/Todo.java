@@ -28,7 +28,7 @@ public class Todo extends BaseEntity {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_account_id", nullable = false)
     private UserAccount userAccount;
 
     @Version
