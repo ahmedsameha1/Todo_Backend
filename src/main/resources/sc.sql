@@ -1,5 +1,5 @@
 create table user_account (
-    id uuid primary key,
+    id uuid primary key default uuid_generate_v4(),
     username varchar(50) not null check (
         char_length(username) >= 1
         and
@@ -45,7 +45,7 @@ create table user_account (
 );
 
 create table todo (
-    id uuid primary key,
+    id uuid primary key default uuid_generate_v4(),
     description text not null check (
         char_length(description) >= 1
         and
