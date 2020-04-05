@@ -1,0 +1,16 @@
+jwt.token.secret: "z/xQdiS1AsGssL+9p8/aJczQEIFdzYzAj3XSamNdsSU="
+##########################################################
+# This for database connection
+
+spring:
+    jpa:
+        properties:
+            hibernate.dialect: "org.hibernate.dialect.PostgreSQLDialect"
+        hibernate:
+            ddl-auto: validate
+            show-sql: true
+    datasource:
+        url: "jdbc:postgresql://localhost:5432/todo"
+        username: myuser
+        password: 123456
+##############################################################################
