@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -50,10 +51,16 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                LocalDateTime expiration = claims.getExpiration().toInstant().atOffset(ZoneOffset.UTC).toLocalDateTime();
                if (LocalDateTime.now(ZoneOffset.UTC).isBefore(expiration)) {
                    String username = claims.getSubject();
-                   SecurityContextHolder.getContext()
-                           .setAuthentication(new UsernamePasswordAuthenticationToken(userDetailsService
-                                   .loadUserByUsername(username), null));
-                    chain.doFilter(request, response);
+                   if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                       UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                               new UsernamePasswordAuthenticationToken(userDetailsService
+                               .loadUserByUsername(username), null);
+                       usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                       SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                       chain.doFilter(request, response);
+                   } else {
+                       super.doFilterInternal(request, response, chain);
+                   }
                } else {
                    super.doFilterInternal(request, response, chain);
                }
