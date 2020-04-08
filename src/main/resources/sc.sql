@@ -1,6 +1,6 @@
 create table user_account (
     id uuid primary key default uuid_generate_v4(),
-    username varchar(50) not null check (
+    username varchar(50) unique not null check (
         char_length(username) >= 1
         and
         char_length(username) <= 50
