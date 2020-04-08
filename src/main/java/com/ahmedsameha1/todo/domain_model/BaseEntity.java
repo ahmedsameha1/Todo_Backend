@@ -1,5 +1,6 @@
 package com.ahmedsameha1.todo.domain_model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,5 +23,6 @@ public abstract class BaseEntity {
     )
     @Column(name = "id", updatable = false, nullable = false)
     @Getter
+    @JsonIgnore
     private UUID id;
 }
