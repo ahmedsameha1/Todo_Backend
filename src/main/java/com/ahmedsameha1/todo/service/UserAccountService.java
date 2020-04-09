@@ -6,4 +6,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface UserAccountService {
+    UserAccount registerNewUserAccount(UserAccount userAccount) throws UserExistsException;
 }
