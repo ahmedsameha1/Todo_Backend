@@ -2,7 +2,6 @@ package com.ahmedsameha1.todo.security.filter;
 
 import com.ahmedsameha1.todo.domain_model.UserAccount;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -15,7 +14,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -54,7 +52,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String jws = Jwts.builder()
                 .setSubject(((UserDetails) authResult.getPrincipal()).getUsername())
-                .setExpiration(Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()).plusDays(EXPIRATION_PERIOD_IN_DAYS)))
+                .setExpiration(Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()).plusDays(JWT_TOKEN_EXPIRATION_PERIOD_IN_DAYS)))
                 .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey))).compact();
         response.addHeader(AUTHORIZATION, TOKEN_PREFIX + jws);
     }
