@@ -1,9 +1,11 @@
-package com.ahmedsameha1.todo.domain_model;
+package com.ahmedsameha1.todo.email_verification;
 
-import lombok.Data;
+import com.ahmedsameha1.todo.domain_model.UserAccount;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.context.ApplicationEvent;
 
-@Data
+@Getter @Setter
 public class OnRegistrationCompleteEvent extends ApplicationEvent {
     private UserAccount userAccount;
     private String appUrl;

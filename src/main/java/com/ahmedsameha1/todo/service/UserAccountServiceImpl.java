@@ -1,11 +1,19 @@
 package com.ahmedsameha1.todo.service;
 
+import com.ahmedsameha1.todo.domain_model.EmailVerificationToken;
 import com.ahmedsameha1.todo.domain_model.UserAccount;
 import com.ahmedsameha1.todo.exception.UserExistsException;
+import com.ahmedsameha1.todo.repository.EmailVerificationTokenRepository;
 import com.ahmedsameha1.todo.repository.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import static com.ahmedsameha1.todo.security.Constants.EMAIL_VERIFICATION_TOKEN_EXPIRATION_PERIOD_IN_DAYS;
 
 @Service
 public class UserAccountServiceImpl implements UserAccountService {
@@ -15,6 +23,8 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    private EmailVerificationTokenRepository emailVerificationTokenRepository;
     @Override
     public UserAccount registerNewUserAccount(UserAccount userAccount) throws UserExistsException {
         if (userAccountRepository.findByUsername(userAccount.getUsername()) != null) {
@@ -23,5 +33,15 @@ public class UserAccountServiceImpl implements UserAccountService {
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         userAccountRepository.save(userAccount);
         return userAccount;
+    }
+
+    @Override
+    public void createEmailVerificationToken(UserAccount userAccount) {
+        EmailVerificationToken emailVerificationToken = new EmailVerificationToken();
+        emailVerificationToken.setToken(UUID.randomUUID().toString());
+        emailVerificationToken.setExpiresAt(LocalDateTime
+                .now(Clock.systemUTC()).plusDays(EMAIL_VERIFICATION_TOKEN_EXPIRATION_PERIOD_IN_DAYS));
+        emailVerificationToken.setUserAccount(userAccount);
+        emailVerificationTokenRepository.save(emailVerificationToken);
     }
 }

@@ -5,4 +5,5 @@ import com.ahmedsameha1.todo.exception.UserExistsException;
 
 public interface UserAccountService {
     UserAccount registerNewUserAccount(UserAccount userAccount) throws UserExistsException;
+    void createEmailVerificationToken(UserAccount userAccount);
 }
