@@ -36,12 +36,13 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public void createEmailVerificationToken(UserAccount userAccount) {
+    public EmailVerificationToken createEmailVerificationToken(UserAccount userAccount) {
         EmailVerificationToken emailVerificationToken = new EmailVerificationToken();
         emailVerificationToken.setToken(UUID.randomUUID().toString());
         emailVerificationToken.setExpiresAt(LocalDateTime
                 .now(Clock.systemUTC()).plusDays(EMAIL_VERIFICATION_TOKEN_EXPIRATION_PERIOD_IN_DAYS));
         emailVerificationToken.setUserAccount(userAccount);
         emailVerificationTokenRepository.save(emailVerificationToken);
+        return emailVerificationToken;
     }
 }
