@@ -1,4 +1,5 @@
 jwt.token.secret: "z/xQdiS1AsGssL+9p8/aJczQEIFdzYzAj3XSamNdsSU="
+emailVerificationMessage: Thanks for signing up at Todo app.\nPlease click the following link to verify your email.
 ##########################################################
 # This for database connection
 
