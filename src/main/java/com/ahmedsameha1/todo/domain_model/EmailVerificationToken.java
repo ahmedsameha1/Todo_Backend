@@ -1,6 +1,7 @@
 package com.ahmedsameha1.todo.domain_model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter @Setter
 public class EmailVerificationToken extends BaseEntity {
     @NotBlank
     @Column(nullable = false)
@@ -20,7 +21,7 @@ public class EmailVerificationToken extends BaseEntity {
 
     @Future
     @Column(nullable = false)
-    private LocalDateTime expires_at;
+    private LocalDateTime expiresAt;
 
     @NotNull
     @OneToOne
