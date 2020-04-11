@@ -11,6 +11,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
+import static com.ahmedsameha1.todo.security.Constants.EMAIL_VERIFICATION_URL;
+
 
 @Component
 public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent> {
@@ -30,7 +32,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         var userAccountEmail = userAccount.getEmail();
         var emailSubject = "Registration Confirmation";
         var emailVerificationUrl = event.getAppUrl()
-                + "/emailVerification?token=" + emailVerificationToken.getToken();
+                + EMAIL_VERIFICATION_URL + "?token=" + emailVerificationToken.getToken();
         var email = new SimpleMailMessage();
         email.setTo(userAccountEmail);
         email.setSubject(emailSubject);
