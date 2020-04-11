@@ -6,13 +6,12 @@ import com.ahmedsameha1.todo.service.UserAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import static com.ahmedsameha1.todo.security.Constants.EMAIL_VERIFICATION_URL;
 import static com.ahmedsameha1.todo.security.Constants.SIGN_UP_URL;
 
 @RestController
@@ -29,5 +28,12 @@ public class UserAccountController {
         applicationEventPublisher
                 .publishEvent(new OnRegistrationCompleteEvent(userAccount, request.getContextPath()));
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(EMAIL_VERIFICATION_URL)
+    public ResponseEntity<?> emailVerification(@RequestParam("token") String token) {
+        return userAccountService.enableUserAccount(token)?
+                ResponseEntity.ok().build() :
+                ResponseEntity.badRequest().build();
     }
 }
