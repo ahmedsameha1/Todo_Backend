@@ -45,4 +45,17 @@ public class UserAccountServiceImpl implements UserAccountService {
         emailVerificationTokenRepository.save(emailVerificationToken);
         return emailVerificationToken;
     }
+
+    @Override
+    public boolean enableUserAccount(String token) {
+        var emailVerificationToken = emailVerificationTokenRepository.findByToken(token);
+        if (emailVerificationToken == null
+                || emailVerificationToken.getExpiresAt().isBefore(LocalDateTime.now(Clock.systemUTC()))) {
+            return false;
+        }
+        var userAccount = emailVerificationToken.getUserAccount();
+        userAccount.setEnabled(true);
+        userAccountRepository.save(userAccount);
+        return true;
+    }
 }
