@@ -20,7 +20,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     @Autowired
     private JavaMailSender javaMailSender;
 
-    @Value("${emailVerificationMessage")
+    @Value("${emailVerificationMessage}")
     private String emailVerificationMessage;
 
     @Override
