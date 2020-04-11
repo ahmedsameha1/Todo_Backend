@@ -26,11 +26,13 @@ import java.time.LocalDateTime;
 import static com.ahmedsameha1.todo.security.Constants.*;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Value("${jwt.token.secret}")
     private String secretKey;
+
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, String secretKey) {
+        this.authenticationManager = authenticationManager;
+        this.secretKey = secretKey;
+    }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
