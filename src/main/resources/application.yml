@@ -15,3 +15,13 @@ spring:
         username: myuser
         password: 123456
 ##############################################################################
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: ahmedmsameha1@gmail.com
+        password: twcodmcenttnblha
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls.enable: true
