@@ -25,8 +25,10 @@ public class UserAccountController {
     @PostMapping(SIGN_UP_URL)
     public ResponseEntity<?> signUp(@RequestBody @Valid UserAccount userAccount, HttpServletRequest request) {
         userAccount = userAccountService.registerNewUserAccount(userAccount);
+        var appUrl = request.getScheme() + "://" + request.getServerName()
+                + ":" + request.getServerPort() + request.getContextPath();
         applicationEventPublisher
-                .publishEvent(new OnRegistrationCompleteEvent(userAccount, request.getContextPath()));
+                .publishEvent(new OnRegistrationCompleteEvent(userAccount, appUrl));
         return ResponseEntity.ok().build();
     }
 
