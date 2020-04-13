@@ -8,6 +8,7 @@ import com.ahmedsameha1.todo.repository.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -47,6 +48,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
+    @Transactional
     public boolean enableUserAccount(String token) {
         var emailVerificationToken = emailVerificationTokenRepository.findByToken(token);
         if (emailVerificationToken == null
@@ -56,6 +58,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         var userAccount = emailVerificationToken.getUserAccount();
         userAccount.setEnabled(true);
         userAccountRepository.save(userAccount);
+        emailVerificationTokenRepository.delete(emailVerificationToken);
         return true;
     }
 }
