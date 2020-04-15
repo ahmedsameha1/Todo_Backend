@@ -1,5 +1,4 @@
 jwt.token.secret: "z/xQdiS1AsGssL+9p8/aJczQEIFdzYzAj3XSamNdsSU="
-emailVerificationMessage: Thanks for signing up at Todo app.\nPlease click the following link to verify your email.
 ##########################################################
 # This for database connection
 
@@ -14,6 +13,7 @@ spring:
         url: "jdbc:postgresql://localhost:5432/todo"
         username: myuser
         password: 123456
+    messages.basename: i18n/messages
 ##############################################################################
     mail:
         host: smtp.gmail.com

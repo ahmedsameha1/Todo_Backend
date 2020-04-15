@@ -4,7 +4,6 @@ import com.ahmedsameha1.todo.domain_model.EmailVerificationToken;
 import com.ahmedsameha1.todo.domain_model.UserAccount;
 import com.ahmedsameha1.todo.service.UserAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
@@ -22,8 +21,8 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     @Autowired
     private JavaMailSender javaMailSender;
 
-    @Value("${emailVerificationMessage}")
-    private String emailVerificationMessage;
+    @Autowired
+    private MessageSource messageSource;
 
     @Override
     public void onApplicationEvent(OnRegistrationCompleteEvent event) {
@@ -36,6 +35,8 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         var email = new SimpleMailMessage();
         email.setTo(userAccountEmail);
         email.setSubject(emailSubject);
+        var emailVerificationMessage = messageSource.getMessage("emailVerificationMessage",
+                null, event.getLocale());
         email.setText(emailVerificationMessage + "\r\n" + emailVerificationUrl);
         javaMailSender.send(email);
     }
