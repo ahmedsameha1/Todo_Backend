@@ -2,6 +2,7 @@ package com.ahmedsameha1.todo.service;
 
 import com.ahmedsameha1.todo.domain_model.EmailVerificationToken;
 import com.ahmedsameha1.todo.domain_model.UserAccount;
+import com.ahmedsameha1.todo.exception.BadEmailVerificationTokenException;
 import com.ahmedsameha1.todo.exception.UserExistsException;
 import com.ahmedsameha1.todo.repository.EmailVerificationTokenRepository;
 import com.ahmedsameha1.todo.repository.UserAccountRepository;
@@ -49,16 +50,15 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     @Transactional
-    public boolean enableUserAccount(String token) {
+    public void enableUserAccount(String token) throws BadEmailVerificationTokenException {
         var emailVerificationToken = emailVerificationTokenRepository.findByToken(token);
         if (emailVerificationToken == null
                 || emailVerificationToken.getExpiresAt().isBefore(LocalDateTime.now(Clock.systemUTC()))) {
-            return false;
+            throw new BadEmailVerificationTokenException();
         }
         var userAccount = emailVerificationToken.getUserAccount();
         userAccount.setEnabled(true);
         userAccountRepository.save(userAccount);
         emailVerificationTokenRepository.delete(emailVerificationToken);
-        return true;
     }
 }

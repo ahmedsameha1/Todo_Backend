@@ -47,5 +47,15 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         errorResponse.setPath(request.getRequestURI());
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(BadEmailVerificationTokenException.class)
+    public ResponseEntity<ErrorResponse> badEmailVerificationToken(HttpServletRequest request) {
+        var errorResponse = new ErrorResponse();
+        errorResponse.setMessage(messageSource.getMessage("error.badEmailVerificationTokenProblem",
+                null, request.getLocale()));
+        errorResponse.setPath(request.getRequestURI());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+
+    }
 }
 

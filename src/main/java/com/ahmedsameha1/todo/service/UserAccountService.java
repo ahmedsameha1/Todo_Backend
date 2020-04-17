@@ -8,5 +8,5 @@ public interface UserAccountService {
     UserAccount registerNewUserAccount(UserAccount userAccount) throws UserExistsException;
     EmailVerificationToken createEmailVerificationToken(UserAccount userAccount);
 
-    boolean enableUserAccount(String token);
+    void enableUserAccount(String token);
 }

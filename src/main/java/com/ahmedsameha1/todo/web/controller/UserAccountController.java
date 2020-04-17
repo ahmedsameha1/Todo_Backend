@@ -58,9 +58,8 @@ public class UserAccountController {
 
     @GetMapping(EMAIL_VERIFICATION_URL)
     public ResponseEntity<?> emailVerification(@RequestParam("token") String token) {
-        return userAccountService.enableUserAccount(token) ?
-                ResponseEntity.ok().build() :
-                ResponseEntity.badRequest().build();
+        userAccountService.enableUserAccount(token);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(SIGN_IN_URL)
