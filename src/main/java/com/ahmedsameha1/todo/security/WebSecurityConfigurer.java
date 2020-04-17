@@ -1,11 +1,9 @@
 package com.ahmedsameha1.todo.security;
 
-import com.ahmedsameha1.todo.security.filter.JwtAuthenticationFilter;
-import com.ahmedsameha1.todo.security.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,8 +14,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import static com.ahmedsameha1.todo.security.Constants.EMAIL_VERIFICATION_URL;
-import static com.ahmedsameha1.todo.security.Constants.SIGN_UP_URL;
+import static com.ahmedsameha1.todo.security.Constants.*;
 
 @EnableWebSecurity
 public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
@@ -26,9 +23,6 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @Value("${jwt.token.secret}")
-    private String secretKey;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -40,9 +34,9 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 // This to allow any unknown user to sign up
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                 .antMatchers(HttpMethod.GET, EMAIL_VERIFICATION_URL).permitAll()
+                .antMatchers(HttpMethod.POST, SIGN_IN_URL).permitAll()
                 ////////////////////////////////////////////////
                 .anyRequest().authenticated().and()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(), secretKey))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager()))
                 // This because we don't use sessions
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -51,6 +45,12 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     @Bean

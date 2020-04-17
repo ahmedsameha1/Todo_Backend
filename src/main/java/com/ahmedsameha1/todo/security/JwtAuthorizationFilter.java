@@ -1,6 +1,5 @@
-package com.ahmedsameha1.todo.security.filter;
+package com.ahmedsameha1.todo.security;
 
-import com.ahmedsameha1.todo.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
