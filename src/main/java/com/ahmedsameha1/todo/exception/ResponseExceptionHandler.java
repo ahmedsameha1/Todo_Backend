@@ -36,5 +36,16 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         errorResponse.setPath(request.getRequestURI());
         return new ResponseEntity<>(errorResponse, HttpStatus.LOCKED);
     }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> wrongPassword(HttpServletRequest request) {
+        var errorResponse = new ErrorResponse();
+        errorResponse.setMessage(messageSource.getMessage("error.badCredentialsProblem",
+                null, request.getLocale()));
+        errorResponse.setSuggestion(messageSource.getMessage("error.badCredentialsSuggestion",
+                null, request.getLocale()));
+        errorResponse.setPath(request.getRequestURI());
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
 }
 
