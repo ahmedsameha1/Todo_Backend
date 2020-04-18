@@ -27,8 +27,8 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static com.ahmedsameha1.todo.security.Constants.EMAIL_VERIFICATION_TOKEN_EXPIRATION_PERIOD_IN_DAYS;
-import static com.ahmedsameha1.todo.security.Constants.JWT_TOKEN_EXPIRATION_PERIOD_IN_DAYS;
+import static com.ahmedsameha1.todo.Constants.EMAIL_VERIFICATION_TOKEN_EXPIRATION_PERIOD_IN_DAYS;
+import static com.ahmedsameha1.todo.Constants.JWT_TOKEN_EXPIRATION_PERIOD_IN_DAYS;
 
 @Service
 public class UserAccountServiceImpl implements UserAccountService {

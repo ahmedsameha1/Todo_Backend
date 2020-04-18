@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.ahmedsameha1.todo.security.Constants.ErrorCode.BAD_EMAIL_VERIFICATION_TOKEN;
+import static com.ahmedsameha1.todo.Constants.ErrorCode.BAD_EMAIL_VERIFICATION_TOKEN;
 
 @RestControllerAdvice
 public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {

@@ -1,4 +1,4 @@
-package com.ahmedsameha1.todo.security;
+package com.ahmedsameha1.todo;
 
 public class Constants {
     public static final String AUTHORIZATION = "Authorization";

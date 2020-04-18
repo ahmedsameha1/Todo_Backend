@@ -4,28 +4,18 @@ import com.ahmedsameha1.todo.domain_model.UserAccount;
 import com.ahmedsameha1.todo.email_verification.OnRegistrationCompleteEvent;
 import com.ahmedsameha1.todo.security.SignInRequest;
 import com.ahmedsameha1.todo.service.UserAccountService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.sql.Timestamp;
-import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.Map;
 
-import static com.ahmedsameha1.todo.security.Constants.*;
+import static com.ahmedsameha1.todo.Constants.*;
 
 @RestController
 public class UserAccountController {

@@ -10,7 +10,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
-import static com.ahmedsameha1.todo.security.Constants.EMAIL_VERIFICATION_URL;
+import static com.ahmedsameha1.todo.Constants.EMAIL_VERIFICATION_URL;
 
 
 @Component

@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import static com.ahmedsameha1.todo.security.Constants.AUTHORIZATION;
-import static com.ahmedsameha1.todo.security.Constants.TOKEN_PREFIX;
+import static com.ahmedsameha1.todo.Constants.AUTHORIZATION;
+import static com.ahmedsameha1.todo.Constants.TOKEN_PREFIX;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Autowired
