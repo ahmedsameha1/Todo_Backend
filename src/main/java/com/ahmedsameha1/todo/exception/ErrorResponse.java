@@ -11,6 +11,7 @@ import java.time.Instant;
 public class ErrorResponse {
     private Instant timestamp = Instant.now();
     private String path;
+    private short code;
     private String message;
     private String suggestion;
 }
