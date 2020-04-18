@@ -41,9 +41,6 @@ public class UserAccountController {
     @Autowired
     private MessageSource messageSource;
 
-    @Value("${jwtSecret}")
-    private String jwtSecret;
-
     @PostMapping(SIGN_UP_URL)
     public ResponseEntity<?> signUp(@RequestBody @Valid UserAccount userAccount, HttpServletRequest request) {
         userAccount = userAccountService.registerNewUserAccount(userAccount);
@@ -64,13 +61,7 @@ public class UserAccountController {
 
     @PostMapping(SIGN_IN_URL)
     public ResponseEntity<Map<String, String>> signIn(@RequestBody @Valid SignInRequest signInRequest) {
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(signInRequest.getUsername(),
-                        signInRequest.getPassword()));
-        String jws = Jwts.builder()
-                .setSubject(((UserDetails) authentication.getPrincipal()).getUsername())
-                .setExpiration(Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()).plusDays(JWT_TOKEN_EXPIRATION_PERIOD_IN_DAYS)))
-                .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret))).compact();
+        var jws = userAccountService.authenticate(signInRequest);
         return ResponseEntity.ok(Map.of("jwt", jws));
     }
 }
