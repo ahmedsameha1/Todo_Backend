@@ -12,6 +12,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.servlet.http.HttpServletRequest;
 
+import static com.ahmedsameha1.todo.security.Constants.ErrorCode.BAD_EMAIL_VERIFICATION_TOKEN;
+
 @RestControllerAdvice
 public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @Autowired
@@ -53,9 +55,10 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         var errorResponse = new ErrorResponse();
         errorResponse.setMessage(messageSource.getMessage("error.badEmailVerificationTokenProblem",
                 null, request.getLocale()));
+        errorResponse.setSuggestion(messageSource.getMessage("error.badEmailVerificationTokenSuggestion",
+                null, request.getLocale()));
+        errorResponse.setCode(BAD_EMAIL_VERIFICATION_TOKEN);
         errorResponse.setPath(request.getRequestURI());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-
     }
 }
-
