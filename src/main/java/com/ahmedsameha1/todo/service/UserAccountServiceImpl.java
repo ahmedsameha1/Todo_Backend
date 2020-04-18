@@ -70,11 +70,13 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     @Transactional
-    public void enableUserAccount(String token) throws BadEmailVerificationTokenException {
+    public void enableUserAccount(String token) {
         var emailVerificationToken = emailVerificationTokenRepository.findByToken(token);
-        if (emailVerificationToken == null
-                || emailVerificationToken.getExpiresAt().isBefore(LocalDateTime.now(Clock.systemUTC()))) {
+        if (emailVerificationToken == null) {
             throw new BadEmailVerificationTokenException();
+        }
+        if (emailVerificationToken.getExpiresAt().isBefore(LocalDateTime.now(Clock.systemUTC()))) {
+            throw new ExpiredEmailVerificationTokenException();
         }
         var userAccount = emailVerificationToken.getUserAccount();
         userAccount.setEnabled(true);
