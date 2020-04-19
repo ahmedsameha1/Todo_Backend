@@ -2,6 +2,7 @@ package com.ahmedsameha1.todo.service;
 
 import com.ahmedsameha1.todo.domain_model.EmailVerificationToken;
 import com.ahmedsameha1.todo.domain_model.UserAccount;
+import com.ahmedsameha1.todo.email_verification.NeedEmailVerificationToken;
 import com.ahmedsameha1.todo.exception.BadEmailVerificationTokenException;
 import com.ahmedsameha1.todo.exception.ExpiredEmailVerificationTokenException;
 import com.ahmedsameha1.todo.exception.UserExistsException;
@@ -13,6 +14,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +24,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -44,17 +47,25 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
+
     @Value("${jwtSecret}")
     private String jwtSecret;
 
     @Override
-    public UserAccount registerNewUserAccount(UserAccount userAccount) throws UserExistsException {
+    public void registerNewUserAccount(UserAccount userAccount,
+                                              HttpServletRequest request)
+            throws UserExistsException {
         if (userAccountRepository.findByUsername(userAccount.getUsername()) != null) {
             throw new UserExistsException();
         }
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         userAccountRepository.save(userAccount);
-        return userAccount;
+        var appUrl = request.getScheme() + "://" + request.getServerName()
+                + ":" + request.getServerPort() + request.getContextPath();
+        applicationEventPublisher
+                .publishEvent(new NeedEmailVerificationToken(userAccount, appUrl, request.getLocale()));
     }
 
     @Override
@@ -77,12 +88,17 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     @Transactional
-    public void enableUserAccount(String token) {
+    public void enableUserAccount(String token, HttpServletRequest httpServletRequest) {
         var emailVerificationToken = emailVerificationTokenRepository.findByToken(token);
         if (emailVerificationToken == null) {
             throw new BadEmailVerificationTokenException();
         }
         if (emailVerificationToken.getExpiresAt().isBefore(LocalDateTime.now(Clock.systemUTC()))) {
+            var appUrl = httpServletRequest.getScheme() + "://" + httpServletRequest.getServerName()
+                    + ":" + httpServletRequest.getServerPort() + httpServletRequest.getContextPath();
+            applicationEventPublisher
+                    .publishEvent(new NeedEmailVerificationToken(emailVerificationToken.getUserAccount(),
+                            appUrl, httpServletRequest.getLocale()));
             throw new ExpiredEmailVerificationTokenException();
         }
         var userAccount = emailVerificationToken.getUserAccount();
@@ -92,7 +108,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public String authenticate(SignInRequest signInRequest) {
+    public String authenticate(SignInRequest signInRequest, HttpServletRequest httpServletRequest) {
         Authentication authentication;
         try {
             authentication = authenticationManager
@@ -102,6 +118,10 @@ public class UserAccountServiceImpl implements UserAccountService {
            var userAccount = userAccountRepository.findByUsername(signInRequest.getUsername());
            var emailVerificationToken = emailVerificationTokenRepository.findByUserAccount(userAccount);
            if (emailVerificationToken.getExpiresAt().isBefore(LocalDateTime.now(Clock.systemUTC()))) {
+               var appUrl = httpServletRequest.getScheme() + "://" + httpServletRequest.getServerName()
+                       + ":" + httpServletRequest.getServerPort() + httpServletRequest.getContextPath();
+               applicationEventPublisher
+                       .publishEvent(new NeedEmailVerificationToken(userAccount, appUrl, httpServletRequest.getLocale()));
                throw new ExpiredEmailVerificationTokenException();
            } else {
                throw de;
