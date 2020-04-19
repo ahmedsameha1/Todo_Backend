@@ -14,7 +14,7 @@ import static com.ahmedsameha1.todo.Constants.EMAIL_VERIFICATION_URL;
 
 
 @Component
-public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent> {
+public class RegistrationListener implements ApplicationListener<NeedEmailVerificationToken> {
     @Autowired
     private UserAccountService userAccountService;
 
@@ -25,7 +25,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     private MessageSource messageSource;
 
     @Override
-    public void onApplicationEvent(OnRegistrationCompleteEvent event) {
+    public void onApplicationEvent(NeedEmailVerificationToken event) {
         UserAccount userAccount = event.getUserAccount();
         EmailVerificationToken emailVerificationToken = userAccountService.createEmailVerificationToken(userAccount);
         var userAccountEmail = userAccount.getEmail();

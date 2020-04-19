@@ -7,12 +7,12 @@ import org.springframework.context.ApplicationEvent;
 import java.util.Locale;
 
 @Getter
-public class OnRegistrationCompleteEvent extends ApplicationEvent {
+public class NeedEmailVerificationToken extends ApplicationEvent {
     private UserAccount userAccount;
     private String appUrl;
     private Locale locale;
 
-    public OnRegistrationCompleteEvent(UserAccount userAccount, String appUrl, Locale locale) {
+    public NeedEmailVerificationToken(UserAccount userAccount, String appUrl, Locale locale) {
         super(userAccount);
         this.userAccount = userAccount;
         this.appUrl = appUrl;
