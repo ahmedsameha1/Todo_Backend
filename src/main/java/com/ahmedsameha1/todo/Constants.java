@@ -11,5 +11,6 @@ public class Constants {
 
     public static class ErrorCode {
         public static final short BAD_EMAIL_VERIFICATION_TOKEN = 1;
+        public static final short EXPIRED_EMAIL_VERIFICATION_TOKEN = 2;
     }
 }
