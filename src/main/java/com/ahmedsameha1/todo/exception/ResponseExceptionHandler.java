@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.servlet.http.HttpServletRequest;
 
 import static com.ahmedsameha1.todo.Constants.ErrorCode.BAD_EMAIL_VERIFICATION_TOKEN;
+import static com.ahmedsameha1.todo.Constants.ErrorCode.EXPIRED_EMAIL_VERIFICATION_TOKEN;
 
 @RestControllerAdvice
 public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
@@ -40,7 +41,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponse> wrongPassword(HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> wrongUsernamePasswordCombination(HttpServletRequest request) {
         var errorResponse = new ErrorResponse();
         errorResponse.setMessage(messageSource.getMessage("error.badCredentialsProblem",
                 null, request.getLocale()));
@@ -59,6 +60,18 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                 null, request.getLocale()));
         errorResponse.setCode(BAD_EMAIL_VERIFICATION_TOKEN);
         errorResponse.setPath(request.getRequestURI());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ExpiredEmailVerificationTokenException.class)
+    public ResponseEntity<ErrorResponse> expiredEmailVerificationTokenException(HttpServletRequest httpServletRequest) {
+        var errorResponse = new ErrorResponse();
+        errorResponse.setMessage(messageSource.getMessage("error.ExpiredEmailVerificationTokenProblem",
+                null, httpServletRequest.getLocale()));
+        errorResponse.setSuggestion(messageSource.getMessage("error.ExpiredEmailVerificationTokenSuggestion",
+                null, httpServletRequest.getLocale()));
+        errorResponse.setCode(EXPIRED_EMAIL_VERIFICATION_TOKEN);
+        errorResponse.setPath(httpServletRequest.getRequestURI());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }
