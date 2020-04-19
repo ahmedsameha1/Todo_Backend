@@ -5,6 +5,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -12,8 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.ahmedsameha1.todo.Constants.ErrorCode.BAD_EMAIL_VERIFICATION_TOKEN;
-import static com.ahmedsameha1.todo.Constants.ErrorCode.EXPIRED_EMAIL_VERIFICATION_TOKEN;
+import static com.ahmedsameha1.todo.Constants.ErrorCode.*;
 
 @RestControllerAdvice
 public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
@@ -73,5 +73,17 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         errorResponse.setCode(EXPIRED_EMAIL_VERIFICATION_TOKEN);
         errorResponse.setPath(httpServletRequest.getRequestURI());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ErrorResponse> disabledUserAccount(HttpServletRequest httpServletRequest) {
+        var errorResponse = new ErrorResponse();
+        errorResponse.setMessage(messageSource.getMessage("error.DisabledExceptionProblem",
+                null, httpServletRequest.getLocale()));
+        errorResponse.setSuggestion(messageSource.getMessage("error.DisabledExceptionSuggestion",
+                null, httpServletRequest.getLocale()));
+        errorResponse.setCode(DISABLED_USER_ACCOUNT);
+        errorResponse.setPath(httpServletRequest.getRequestURI());
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 }
