@@ -2,13 +2,17 @@ package com.ahmedsameha1.todo.exception;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -85,5 +89,25 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         errorResponse.setCode(DISABLED_USER_ACCOUNT);
         errorResponse.setPath(httpServletRequest.getRequestURI());
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @Override
+    protected ResponseEntity<Object>
+    handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
+                                 HttpHeaders headers, HttpStatus status, WebRequest request) {
+        var errors = exception.getBindingResult().getAllErrors();
+        var errorResponse = new ErrorResponse();
+        errorResponse.setCode(VALIDATION);
+        errorResponse.setMessage(messageSource.getMessage("error.validation",
+                new Integer[]{errors.size()}, request.getLocale()));
+
+        errors.forEach(objectError -> {
+            if (objectError instanceof FieldError) {
+                errorResponse.getValidationErrors().add(((FieldError) objectError).getField() + ": " + objectError.getDefaultMessage());
+            } else {
+                errorResponse.getValidationErrors().add(objectError.getDefaultMessage());
+            }
+        });
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }
