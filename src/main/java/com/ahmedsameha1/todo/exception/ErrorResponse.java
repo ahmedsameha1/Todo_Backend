@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter @Getter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -14,4 +16,5 @@ public class ErrorResponse {
     private short code;
     private String message;
     private String suggestion;
+    private List<String> validationErrors = new ArrayList<>();
 }
