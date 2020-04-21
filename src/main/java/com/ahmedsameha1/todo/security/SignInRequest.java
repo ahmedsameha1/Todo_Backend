@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 
 @Setter @Getter
 public class SignInRequest {
-    @NotBlank(message = "username must be present")
+    @NotBlank
     private String username;
 
     @NotBlank
