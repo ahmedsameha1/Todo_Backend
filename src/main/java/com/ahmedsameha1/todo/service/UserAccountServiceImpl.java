@@ -73,17 +73,12 @@ public class UserAccountServiceImpl implements UserAccountService {
         var emailVerificationToken = emailVerificationTokenRepository.findByUserAccount(userAccount);
         if (emailVerificationToken == null) {
             emailVerificationToken = new EmailVerificationToken();
-            emailVerificationToken.setToken(UUID.randomUUID().toString());
-            emailVerificationToken.setExpiresAt(LocalDateTime
-                    .now(Clock.systemUTC()).plusDays(EMAIL_VERIFICATION_TOKEN_EXPIRATION_PERIOD_IN_DAYS));
             emailVerificationToken.setUserAccount(userAccount);
-        } else {
-            emailVerificationToken.setToken(UUID.randomUUID().toString());
-            emailVerificationToken.setExpiresAt(LocalDateTime
-                    .now(Clock.systemUTC()).plusDays(EMAIL_VERIFICATION_TOKEN_EXPIRATION_PERIOD_IN_DAYS));
         }
-        emailVerificationTokenRepository.save(emailVerificationToken);
-        return emailVerificationToken;
+        emailVerificationToken.setToken(UUID.randomUUID().toString());
+        emailVerificationToken.setExpiresAt(LocalDateTime
+                .now(Clock.systemUTC()).plusDays(EMAIL_VERIFICATION_TOKEN_EXPIRATION_PERIOD_IN_DAYS));
+        return emailVerificationTokenRepository.save(emailVerificationToken);
     }
 
     @Override
