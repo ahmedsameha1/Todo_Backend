@@ -9,8 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -58,7 +58,7 @@ public class UserAccount extends BaseEntity implements UserDetails {
     @NotNull
     @JsonIgnore
     @OneToMany(mappedBy = "userAccount")
-    private List<Todo> todos = Collections.emptyList();
+    private List<Todo> todos = new ArrayList<>();
 
     @NotNull
     @JsonIgnore
@@ -89,7 +89,7 @@ public class UserAccount extends BaseEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return new ArrayList<>();
     }
 
     @Override
