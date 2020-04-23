@@ -33,7 +33,7 @@ public class UserAccountController {
     @GetMapping(EMAIL_VERIFICATION_URL)
     public ResponseEntity<?> emailVerification(@RequestParam("token") String token,
                                                HttpServletRequest request) {
-        userAccountService.enableUserAccount(token, request);
+        userAccountService.handleUserAccountEnablingProcess(token, request);
         return ResponseEntity.ok().build();
     }
 

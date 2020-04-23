@@ -11,6 +11,6 @@ public interface UserAccountService {
     void registerNewUserAccount(UserAccount userAccount, HttpServletRequest request)
             throws UserExistsException;
     EmailVerificationToken createEmailVerificationToken(UserAccount userAccount);
-    void enableUserAccount(String token, HttpServletRequest httpServletRequest);
+    void handleUserAccountEnablingProcess(String token, HttpServletRequest httpServletRequest);
     String authenticate(SignInRequest signInRequest, HttpServletRequest httpServletRequest);
 }

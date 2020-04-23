@@ -81,9 +81,15 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    @Transactional
-    public void enableUserAccount(String token, HttpServletRequest httpServletRequest) {
+    public void handleUserAccountEnablingProcess(String token, HttpServletRequest httpServletRequest) {
         var emailVerificationToken = emailVerificationTokenRepository.findByToken(token);
+        if (validateEmailVerificationToken(emailVerificationToken, httpServletRequest)) {
+            enableUserAccount(emailVerificationToken);
+        }
+    }
+
+    private boolean validateEmailVerificationToken(EmailVerificationToken emailVerificationToken,
+                                                   HttpServletRequest httpServletRequest) {
         if (emailVerificationToken == null) {
             throw new BadEmailVerificationTokenException();
         }
@@ -95,6 +101,11 @@ public class UserAccountServiceImpl implements UserAccountService {
                             appUrl, httpServletRequest.getLocale()));
             throw new ExpiredEmailVerificationTokenException();
         }
+        return true;
+    }
+
+    @Transactional
+    private void enableUserAccount(EmailVerificationToken emailVerificationToken) {
         var userAccount = emailVerificationToken.getUserAccount();
         userAccount.setEnabled(true);
         userAccountRepository.save(userAccount);
