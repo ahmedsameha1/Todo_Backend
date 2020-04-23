@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.OffsetDateTime;
 
 import static com.ahmedsameha1.todo.Constants.AUTHORIZATION;
 import static com.ahmedsameha1.todo.Constants.TOKEN_PREFIX;
@@ -44,8 +44,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(secretKey).build()
                        .parseClaimsJws(jwt);
                Claims claims = claimsJws.getBody();
-               LocalDateTime expiration = claims.getExpiration().toInstant().atOffset(ZoneOffset.UTC).toLocalDateTime();
-               if (LocalDateTime.now(ZoneOffset.UTC).isBefore(expiration)) {
+               LocalDateTime expiration = claims.getExpiration().toInstant().atOffset(OffsetDateTime.now().getOffset()).toLocalDateTime();
+               if (LocalDateTime.now().isBefore(expiration)) {
                    String username = claims.getSubject();
                    if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =

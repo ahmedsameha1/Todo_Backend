@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
-import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -77,7 +76,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         }
         emailVerificationToken.setToken(UUID.randomUUID().toString());
         emailVerificationToken.setExpiresAt(LocalDateTime
-                .now(Clock.systemUTC()).plusDays(EMAIL_VERIFICATION_TOKEN_EXPIRATION_PERIOD_IN_DAYS));
+                .now().plusDays(EMAIL_VERIFICATION_TOKEN_EXPIRATION_PERIOD_IN_DAYS));
         return emailVerificationTokenRepository.save(emailVerificationToken);
     }
 
@@ -88,7 +87,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (emailVerificationToken == null) {
             throw new BadEmailVerificationTokenException();
         }
-        if (emailVerificationToken.getExpiresAt().isBefore(LocalDateTime.now(Clock.systemUTC()))) {
+        if (emailVerificationToken.getExpiresAt().isBefore(LocalDateTime.now())) {
             var appUrl = httpServletRequest.getScheme() + "://" + httpServletRequest.getServerName()
                     + ":" + httpServletRequest.getServerPort() + httpServletRequest.getContextPath();
             applicationEventPublisher
@@ -112,7 +111,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         } catch (DisabledException de) {
            var userAccount = userAccountRepository.findByUsername(signInRequest.getUsername());
            var emailVerificationToken = emailVerificationTokenRepository.findByUserAccount(userAccount);
-           if (emailVerificationToken.getExpiresAt().isBefore(LocalDateTime.now(Clock.systemUTC()))) {
+           if (emailVerificationToken.getExpiresAt().isBefore(LocalDateTime.now())) {
                var appUrl = httpServletRequest.getScheme() + "://" + httpServletRequest.getServerName()
                        + ":" + httpServletRequest.getServerPort() + httpServletRequest.getContextPath();
                applicationEventPublisher
@@ -124,7 +123,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         }
         return  Jwts.builder()
                 .setSubject(((UserDetails) authentication.getPrincipal()).getUsername())
-                .setExpiration(Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()).plusDays(JWT_TOKEN_EXPIRATION_PERIOD_IN_DAYS)))
+                .setExpiration(Timestamp.valueOf(LocalDateTime.now().plusDays(JWT_TOKEN_EXPIRATION_PERIOD_IN_DAYS)))
                 .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret))).compact();
     }
 }
