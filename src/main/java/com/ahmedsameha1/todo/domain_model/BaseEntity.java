@@ -12,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @MappedSuperclass
