@@ -4,7 +4,9 @@ import com.ahmedsameha1.todo.repository.UserAccountRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.TransactionSystemException;
 
 import javax.persistence.RollbackException;
@@ -121,5 +123,22 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
                 .isInstanceOf(TransactionSystemException.class)
                 .hasCauseInstanceOf(RollbackException.class)
                 .hasRootCauseInstanceOf(ConstraintViolationException.class);
+    }
+
+    @Test
+    @DisplayName("Should fail because there is a user account with the same username")
+    public void test9() {
+        userAccountRepository.save(userAccount);
+        userAccount = new UserAccount();
+        userAccount.setUsername(randomUserName);
+        userAccount.setPassword("ffffffff");
+        userAccount.setFirstName("user2");
+        userAccount.setLastName("user2");
+        userAccount.setGender(Gender.MALE);
+        userAccount.setBirthDay(LocalDate.of(2010, 10, 10));
+        userAccount.setEmail("user2@user2.com");
+        assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                .isInstanceOf(DataIntegrityViolationException.class)
+                .hasRootCauseInstanceOf(PSQLException.class);
     }
 }
