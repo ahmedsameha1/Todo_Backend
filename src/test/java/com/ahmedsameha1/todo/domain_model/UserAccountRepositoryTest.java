@@ -112,4 +112,14 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
                 .hasCauseInstanceOf(RollbackException.class)
                 .hasRootCauseInstanceOf(ConstraintViolationException.class);
     }
+
+    @Test
+    @DisplayName("Should fail because username length is more than 50 character")
+    public void test7() {
+        userAccount.setUsername("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+        assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                .isInstanceOf(TransactionSystemException.class)
+                .hasCauseInstanceOf(RollbackException.class)
+                .hasRootCauseInstanceOf(ConstraintViolationException.class);
+    }
 }
