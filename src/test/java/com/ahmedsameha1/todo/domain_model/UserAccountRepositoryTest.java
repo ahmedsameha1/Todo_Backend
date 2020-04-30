@@ -126,6 +126,20 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
     }
 
     @Test
+    @DisplayName("Should fail because username has whitespace")
+    public void test8() {
+        userAccount.setUsername("t u");
+        assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        userAccount.setUsername(" tu");
+        assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        userAccount.setUsername("tu ");
+        assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                .hasRootCauseInstanceOf(ConstraintViolationException.class);
+    }
+
+    @Test
     @DisplayName("Should fail because there is a user account with the same username")
     public void test9() {
         userAccountRepository.save(userAccount);

@@ -5,7 +5,7 @@ create table user_account (
         and
         char_length(username) <= 50
         and
-        username ~ '^.*\S.*$'
+        username ~ '^\S+$'
     ),
     password varchar(255) not null check (
         char_length(password) >= 8

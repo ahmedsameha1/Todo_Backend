@@ -19,6 +19,7 @@ import java.util.List;
 public class UserAccount extends BaseEntity implements UserDetails {
     @NotBlank
     @Size(min = 1, max = 50)
+    @Pattern(regexp = "^\\S+$")
     @Column(unique = true, nullable = false)
     private String username;
 
