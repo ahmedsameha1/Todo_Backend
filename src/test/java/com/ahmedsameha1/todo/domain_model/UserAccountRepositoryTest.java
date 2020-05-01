@@ -15,8 +15,7 @@ import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
     @Autowired
@@ -32,7 +31,7 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
         randomUserName = UUID.randomUUID().toString();
         userAccount = new UserAccount();
         userAccount.setUsername(randomUserName);
-        userAccount.setPassword("ffffffff");
+        userAccount.setPassword("ffffff3Q");
         userAccount.setFirstName("user2");
         userAccount.setLastName("user2");
         userAccount.setGender(Gender.MALE);
@@ -65,7 +64,7 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
             userAccountRepository.save(userAccount);
             var databaseUserAccount = userAccountRepository.findByUsername(randomUserName);
             assertThat(databaseUserAccount.getUsername()).isEqualTo(randomUserName);
-            assertThat(databaseUserAccount.getPassword()).isEqualTo("ffffffff");
+            assertThat(databaseUserAccount.getPassword()).isEqualTo("ffffff3Q");
             assertThat(databaseUserAccount.getFirstName()).isEqualTo("user2");
             assertThat(databaseUserAccount.getLastName()).isEqualTo("user2");
             assertThat(databaseUserAccount.getGender()).isEqualTo(Gender.MALE);
@@ -153,7 +152,7 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
             userAccountRepository.save(userAccount);
             userAccount = new UserAccount();
             userAccount.setUsername(randomUserName);
-            userAccount.setPassword("ffffffff");
+            userAccount.setPassword("ffffff3Q");
             userAccount.setFirstName("user2");
             userAccount.setLastName("user2");
             userAccount.setGender(Gender.MALE);
@@ -162,6 +161,115 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .isInstanceOf(DataIntegrityViolationException.class)
                     .hasRootCauseInstanceOf(PSQLException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("Password tests")
+    class Password {
+        @Test
+        @DisplayName("Should fail because password is null")
+        public void test1() {
+            userAccount.setPassword(null);
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("Should fail because password is a string that only contains whitespace")
+        public void test2() {
+            userAccount.setPassword("                           ");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("Should fail because password length is less than 8 characters")
+        public void test3() {
+            userAccount.setPassword("fffffff");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("Should fail because password length is more than 255 character")
+        public void test4() {
+            userAccount.setPassword("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+            + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+            + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+            + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+            + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("Should fail because password has whitespace")
+        public void test5() {
+            userAccount.setPassword("tuaaaaaa aaaaaaaaaaaa");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword(" tupppppppppppppppppppp");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("qqqqqqqqqqqqqqqqqqqqqqqtu ");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("Should fail because password must have at least one lowercase character"
+                + "and at least one uppercase character"
+                + "and at least one digit")
+        public void test6() {
+            userAccount.setPassword("qqqqqqqqqqqq");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("QQQQQQQQQQQQ");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("333333333333");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("qqqqqqqqqqqqQ");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("qqqqqqqqqqqq3");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("33333333333q");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("33333333333Q");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("QQQQQQQQQQQq");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("QQQQQQQQQQQ3");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("Passwords are correct because it have: "
+        + "at least one lowercase character and "
+        + "at least one uppercase character and "
+        + "at least one digit and "
+                + "at least 8 characters")
+        public void test7() {
+            userAccount.setPassword("576Agyrtbn");
+            assertThatCode(() -> userAccountRepository.save(userAccount)).doesNotThrowAnyException();
+
         }
     }
 }

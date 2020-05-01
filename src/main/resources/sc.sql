@@ -12,7 +12,7 @@ create table user_account (
         and
         char_length(password) <= 255
         and
-        password ~ '^.*\S.*$'
+        password ~ '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)\S{8,}$'
     ),
     first_name varchar(100) not null check (
         char_length(first_name) >= 1

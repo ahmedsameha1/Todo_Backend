@@ -25,6 +25,7 @@ public class UserAccount extends BaseEntity implements UserDetails {
 
     @NotBlank
     @Size(min = 8, max = 255)
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)\\S{8,}$")
     @Column(nullable = false)
     @Getter(onMethod_ = {@JsonIgnore})
     @Setter(onMethod_ = {@JsonProperty})
