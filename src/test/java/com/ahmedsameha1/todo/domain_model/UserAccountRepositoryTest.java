@@ -8,9 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.transaction.TransactionSystemException;
 
-import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -82,8 +80,6 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
         public void test1() {
             userAccount.setUsername(null);
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
-                    .isInstanceOf(TransactionSystemException.class)
-                    .hasCauseInstanceOf(RollbackException.class)
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
 
@@ -92,8 +88,6 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
         public void test2() {
             userAccount.setUsername("");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
-                    .isInstanceOf(TransactionSystemException.class)
-                    .hasCauseInstanceOf(RollbackException.class)
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
 
@@ -102,23 +96,15 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
         public void test3() {
             userAccount.setUsername("  ");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
-                    .isInstanceOf(TransactionSystemException.class)
-                    .hasCauseInstanceOf(RollbackException.class)
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
             userAccount.setUsername("\n");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
-                    .isInstanceOf(TransactionSystemException.class)
-                    .hasCauseInstanceOf(RollbackException.class)
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
             userAccount.setUsername("\r");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
-                    .isInstanceOf(TransactionSystemException.class)
-                    .hasCauseInstanceOf(RollbackException.class)
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
             userAccount.setUsername("\t");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
-                    .isInstanceOf(TransactionSystemException.class)
-                    .hasCauseInstanceOf(RollbackException.class)
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
 
@@ -127,8 +113,6 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
         public void test4() {
             userAccount.setUsername("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
-                    .isInstanceOf(TransactionSystemException.class)
-                    .hasCauseInstanceOf(RollbackException.class)
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
 
