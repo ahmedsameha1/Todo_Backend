@@ -272,4 +272,50 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
 
         }
     }
+
+    @Nested
+    @DisplayName("FirstName tests")
+    class FirstName {
+        @Test
+        @DisplayName("Should fail because firstName is null")
+        public void test1() {
+            userAccount.setFirstName(null);
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("Should fail because firstName is an empty string")
+        public void test2() {
+            userAccount.setFirstName("");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("Should fail because firstName is a string that only contains whitespace")
+        public void test3() {
+            userAccount.setFirstName("  ");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setFirstName("\n");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setFirstName("\r");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setFirstName("\t");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("Should fail because FirstName length is more than 100 character")
+        public void test4() {
+            userAccount.setFirstName("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" +
+                    "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+    }
 }
