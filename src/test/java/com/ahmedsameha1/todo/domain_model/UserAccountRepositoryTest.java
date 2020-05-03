@@ -195,6 +195,15 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
             userAccount.setPassword("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("\t\t\r\t\t\t\t\r\t\t\t\t\t\t\t");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("\t\t\t\t\t\t\t\n\t\t\t\t\n\t\t");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("\t\t\t\t\t\t\t \t\t\t\t \t\t");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
 
         @Test
@@ -227,6 +236,18 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
             userAccount.setPassword("qqqqqqqqqqqqqqqqqqqqqqqtu ");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("\rqqqqqqqqqqqqqqqqqqqqqqqtu ");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("\tqqqqq\rqqqqqqqqqqqqqqqqqqtu ");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("qqqqqqqq\tqqqqqqqqqqqqqqqtu ");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setPassword("\rqqqqqqqqqqqqqqqqqqqqqqqtu\n");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
