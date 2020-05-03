@@ -26,7 +26,7 @@ create table user_account (
         and
         char_length(last_name) <= 100
         and
-        last_name ~ '^.*\S.*$'
+        last_name ~ '^\S+.*\S+$'
     ),
     email varchar(255) not null check(
         char_length(email) >= 5
