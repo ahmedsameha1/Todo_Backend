@@ -106,6 +106,18 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
             userAccount.setUsername("\t");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setUsername("\t\n");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setUsername("\t\r");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setUsername("\r\n");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setUsername("\r ");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
 
         @Test
