@@ -33,6 +33,7 @@ public class UserAccount extends BaseEntity implements UserDetails {
 
     @NotBlank
     @Size(min = 1, max = 100)
+    @Pattern(regexp = "^\\S+.*\\S+$")
     @Column(nullable = false)
     private String firstName;
 

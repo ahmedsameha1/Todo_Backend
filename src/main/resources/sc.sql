@@ -19,7 +19,7 @@ create table user_account (
         and
         char_length(first_name) <= 100
         and
-        first_name ~ '^.*\S.*$'
+        first_name ~ '^\S+.*\S+$'
     ),
     last_name varchar(100) not null check (
         char_length(last_name) >= 1
