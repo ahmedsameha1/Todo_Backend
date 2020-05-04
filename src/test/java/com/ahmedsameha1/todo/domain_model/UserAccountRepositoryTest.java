@@ -209,7 +209,7 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
         @Test
         @DisplayName("Should fail because password length is less than 8 characters")
         public void test3() {
-            userAccount.setPassword("fffffff");
+            userAccount.setPassword("fff3ffQ");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
