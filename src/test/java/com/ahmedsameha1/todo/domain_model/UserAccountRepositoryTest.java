@@ -484,4 +484,117 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
     }
+
+    @Nested
+    @DisplayName("Email tests")
+    class Email {
+        @Test
+        @DisplayName("Should fail because email is null")
+        public void test1() {
+            userAccount.setEmail(null);
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("Should fail because email is a string that only contains whitespace")
+        public void test2() {
+            userAccount.setEmail("        ");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("\n\n\n\n\n");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("\r\r\r\r\r");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("\t\t\t\t\t");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("\t\r\t\r\t");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("\t\n\t\t\n\t\t");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("\t\t \t \t\t");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("Should fail because email length is more than 255 character")
+        public void test4() {
+            userAccount.setEmail("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+                    + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+                    + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+                    + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+                    + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("Should fail because email has whitespace")
+        public void test5() {
+            userAccount.setEmail(" a@a.aa");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("a@a.aa ");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail(" a@a .aa  ");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("a\r@a.aa");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("\ta@a.aa");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("a @\na.aa");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("\ra@a.aa\n");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("Should fail because email must have one @ character"
+                + "and one . character"
+                + "and ends with two characters from a to z"
+                + "and the . must follow the @ and the last two characters must follow the .")
+        public void test6() {
+            userAccount.setEmail("aaaa.aa");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("a@aaaa.");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("a@a.a");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("aaaaaaaa");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("a.a@aa");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail(".aaa@aaa");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+            userAccount.setEmail("@aaa.aa");
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("should pass because email is valid")
+        public void test7() {
+            userAccount.setEmail("a@a.aa");
+            assertThatCode(() -> userAccountRepository.save(userAccount)).doesNotThrowAnyException();
+
+        }
+    }
 }

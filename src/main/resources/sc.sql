@@ -29,7 +29,7 @@ create table user_account (
         last_name ~ '^\S+.*\S+$'
     ),
     email varchar(255) not null check(
-        char_length(email) >= 5
+        char_length(email) >= 6
         and
         char_length(email) <= 255
         and

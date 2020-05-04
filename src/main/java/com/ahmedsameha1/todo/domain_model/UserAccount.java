@@ -44,8 +44,8 @@ public class UserAccount extends BaseEntity implements UserDetails {
     private String lastName;
 
     @NotBlank
-    @Size(min = 5, max = 255)
-    @Email
+    @Size(min = 6, max = 255)
+    @Pattern(regexp = "(?i)^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$")
     @Column(nullable = false)
     private String email;
 
