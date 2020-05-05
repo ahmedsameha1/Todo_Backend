@@ -597,4 +597,24 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
 
         }
     }
+
+    @Nested
+    @DisplayName("BirthDay tests")
+    class BirthDay {
+        @Test
+        @DisplayName("Should fail because birthDay is null")
+        public void test1() {
+            userAccount.setBirthDay(null);
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("Should fail because birthDay isn't in past")
+        public void test2() {
+            userAccount.setBirthDay(LocalDate.now().plusDays(1));
+            assertThatThrownBy(() -> userAccountRepository.save(userAccount))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+    }
 }
