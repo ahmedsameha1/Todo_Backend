@@ -13,15 +13,16 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @ContextConfiguration(initializers = {ProductionDatabaseBaseTest.PropertiesInitializer.class})
 public abstract class ProductionDatabaseBaseTest {
-    @Container
-    protected static final PostgreSQLContainer postgres = new PostgreSQLContainer();
+    protected static final PostgreSQLContainer postgres;
 
     static {
+        postgres = new PostgreSQLContainer();
         postgres.withDatabaseName("users")
                 .withUsername("postgres")
                 .withPassword("password");
         postgres.setDockerImageName("fintrace/postgres-uuid");
         postgres.withInitScript("sc.sql");
+        postgres.start();
     }
 
     static class PropertiesInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
