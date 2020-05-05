@@ -56,7 +56,7 @@ create table todo (
         description ~ '^.*\S.*$'
     ),
     target_date date not null check(target_date > current_date),
-    is_done boolean default false,
+    done boolean default false,
     user_account_id uuid not null references user_account(id),
     version bigint default 0,
     creation_time timestamp not null,

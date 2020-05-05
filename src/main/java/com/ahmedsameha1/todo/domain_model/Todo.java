@@ -24,7 +24,7 @@ public class Todo extends BaseEntity {
 
     @NotNull
     @Column(nullable = false)
-    private boolean isDone = false;
+    private boolean done = false;
 
     @NotNull
     @ManyToOne
