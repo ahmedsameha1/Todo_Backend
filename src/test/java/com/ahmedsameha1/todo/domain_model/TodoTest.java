@@ -1,9 +1,8 @@
 package com.ahmedsameha1.todo.domain_model;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.*;
 
 public class TodoTest {
     private Todo todo;
@@ -15,6 +14,6 @@ public class TodoTest {
 
     @Test
     public void testDefaultValueOfIsDone() {
-        assertThat(todo.isDone()).isFalse();
+        Assertions.assertThat(todo.isDone()).isFalse();
     }
 }

@@ -15,12 +15,13 @@ import java.util.List;
 
 @Entity
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class UserAccount extends BaseEntity implements UserDetails {
     @NotBlank
     @Size(min = 1, max = 50)
     @Pattern(regexp = "^\\S+$")
     @Column(unique = true, nullable = false)
+    @EqualsAndHashCode.Include
     private String username;
 
     @NotBlank

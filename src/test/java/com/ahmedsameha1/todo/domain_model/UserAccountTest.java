@@ -1,8 +1,9 @@
 package com.ahmedsameha1.todo.domain_model;
 
-import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserAccountTest {
     private UserAccount userAccount;
