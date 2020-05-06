@@ -116,4 +116,24 @@ public class TodoRepositoryTest extends ProductionDatabaseBaseTest {
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
     }
+
+    @Nested
+    @DisplayName("TargetDate tests")
+    class TargetDate {
+        @Test
+        @DisplayName("Should fail because targetDate is null")
+        public void test1() {
+            todo.setTargetDate(null);
+            assertThatThrownBy(() -> todoRepository.save(todo))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        @DisplayName("Should fail because targetDate isn't in the future")
+        public void test2() {
+            todo.setTargetDate(LocalDate.now().minusDays(1));
+            assertThatThrownBy(() -> todoRepository.save(todo))
+                    .hasRootCauseInstanceOf(ConstraintViolationException.class);
+        }
+    }
 }

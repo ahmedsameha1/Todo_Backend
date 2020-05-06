@@ -18,6 +18,7 @@ public class Todo extends BaseEntity {
     @Column(nullable = false)
     private String description;
 
+    @NotNull
     @Future
     @Column(nullable = false)
     private LocalDate targetDate;
