@@ -136,4 +136,12 @@ public class TodoRepositoryTest extends ProductionDatabaseBaseTest {
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
     }
+
+    @Test
+    @DisplayName("Should fail because UserAccount is null")
+    public void testThatUserAccountIsNotNull() {
+        todo.setUserAccount(null);
+        assertThatThrownBy(() -> todoRepository.save(todo))
+                .hasRootCauseInstanceOf(ConstraintViolationException.class);
+    }
 }
