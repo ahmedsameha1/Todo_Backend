@@ -123,7 +123,7 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
         @Test
         @DisplayName("Should fail because username length is more than 50 character")
         public void test4() {
-            userAccount.setUsername("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+            userAccount.setUsername("f".repeat(51));
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
@@ -217,11 +217,7 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
         @Test
         @DisplayName("Should fail because password length is more than 255 character")
         public void test4() {
-            userAccount.setPassword("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-            + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-            + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-            + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-            + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+            userAccount.setPassword("f3Q" + "f".repeat(253));
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
@@ -350,8 +346,7 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
         @Test
         @DisplayName("Should fail because firstName length is more than 100 character")
         public void test4() {
-            userAccount.setFirstName("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" +
-                    "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+            userAccount.setFirstName("f".repeat(101));
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
@@ -443,8 +438,7 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
         @Test
         @DisplayName("Should fail because lastName length is more than 100 character")
         public void test4() {
-            userAccount.setLastName("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" +
-                    "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+            userAccount.setLastName("f".repeat(101));
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
@@ -525,11 +519,7 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
         @Test
         @DisplayName("Should fail because email length is more than 255 character")
         public void test4() {
-            userAccount.setEmail("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-                    + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-                    + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-                    + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-                    + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+            userAccount.setEmail("a@a.aa" + "a".repeat(250));
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
         }
