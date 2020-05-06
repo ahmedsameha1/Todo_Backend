@@ -65,7 +65,7 @@ create table todo (
 
 create table email_verification_token(
     id uuid primary key default uuid_generate_v4(),
-    token varchar(100) not null check (token ~ '^.*\S.*$'),
+    token uuid not null unique,
     expires_at timestamp not null check(expires_at > current_timestamp),
     user_account_id uuid not null unique references user_account(id),
     creation_time timestamp not null,

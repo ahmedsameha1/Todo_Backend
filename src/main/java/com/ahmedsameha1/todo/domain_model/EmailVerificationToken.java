@@ -11,14 +11,16 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Getter @Setter
 public class EmailVerificationToken extends BaseEntity {
-    @NotBlank
-    @Column(nullable = false)
-    private String token;
+    @NotNull
+    @Column(nullable = false, unique = true)
+    private UUID token;
 
+    @NotNull
     @Future
     @Column(nullable = false)
     private LocalDateTime expiresAt;

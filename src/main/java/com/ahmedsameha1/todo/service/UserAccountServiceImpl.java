@@ -74,7 +74,7 @@ public class UserAccountServiceImpl implements UserAccountService {
             emailVerificationToken = new EmailVerificationToken();
             emailVerificationToken.setUserAccount(userAccount);
         }
-        emailVerificationToken.setToken(UUID.randomUUID().toString());
+        emailVerificationToken.setToken(UUID.randomUUID());
         emailVerificationToken.setExpiresAt(LocalDateTime
                 .now().plusDays(EMAIL_VERIFICATION_TOKEN_EXPIRATION_PERIOD_IN_DAYS));
         return emailVerificationTokenRepository.save(emailVerificationToken);
