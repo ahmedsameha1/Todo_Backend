@@ -71,3 +71,12 @@ create table email_verification_token(
     creation_time timestamp not null,
     update_time timestamp not null
 );
+
+create table password_reset_token(
+    id uuid primary key default uuid_generate_v4(),
+    token uuid not null unique,
+    expires_at timestamp not null check(expires_at > current_timestamp),
+    user_account_id uuid not null unique references user_account(id),
+    creation_time timestamp not null,
+    update_time timestamp not null
+);
