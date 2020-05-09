@@ -1,5 +1,6 @@
 package com.ahmedsameha1.todo.security;
 
+import com.ahmedsameha1.todo.ConfigurationTest;
 import com.ahmedsameha1.todo.domain_model.Gender;
 import com.ahmedsameha1.todo.domain_model.UserAccount;
 import com.ahmedsameha1.todo.repository.UserAccountRepository;
@@ -7,9 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -23,14 +23,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
+@Import(ConfigurationTest.class)
 public class UserDetailsServiceImplTest {
-    @TestConfiguration
-    static class Config {
-        @Bean
-        public UserDetailsService userDetailsService() {
-            return new UserDetailsServiceImpl();
-        }
-    }
     @MockBean
     private UserAccountRepository userAccountRepository;
 
