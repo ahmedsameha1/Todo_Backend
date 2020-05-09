@@ -24,7 +24,7 @@ public class UserAccountController {
 
     @PostMapping(SIGN_UP_URL)
     public ResponseEntity<?> signUp(@RequestBody @Valid UserAccount userAccount, HttpServletRequest request) {
-        userAccountService.registerNewUserAccount(userAccount, request);
+        userAccountService.registerUserAccount(userAccount, request);
         String message = messageSource.getMessage("signUpSuccessfullyMessage",
                 null, request.getLocale());
         return ResponseEntity.ok(message);

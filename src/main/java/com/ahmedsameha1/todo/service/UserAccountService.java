@@ -8,7 +8,7 @@ import com.ahmedsameha1.todo.security.SignInRequest;
 import javax.servlet.http.HttpServletRequest;
 
 public interface UserAccountService {
-    void registerNewUserAccount(UserAccount userAccount, HttpServletRequest request)
+    void registerUserAccount(UserAccount userAccount, HttpServletRequest request)
             throws UserExistsException;
     EmailVerificationToken createEmailVerificationToken(UserAccount userAccount);
     void handleUserAccountEnablingProcess(String token, HttpServletRequest httpServletRequest);

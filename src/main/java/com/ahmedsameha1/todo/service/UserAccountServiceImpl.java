@@ -53,8 +53,8 @@ public class UserAccountServiceImpl implements UserAccountService {
     private String jwtSecret;
 
     @Override
-    public void registerNewUserAccount(UserAccount userAccount,
-                                              HttpServletRequest request)
+    public void registerUserAccount(UserAccount userAccount,
+                                    HttpServletRequest request)
             throws UserExistsException {
         if (userAccountRepository.findByUsername(userAccount.getUsername()) != null) {
             throw new UserExistsException();
