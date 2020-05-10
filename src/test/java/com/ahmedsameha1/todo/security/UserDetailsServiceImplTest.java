@@ -6,13 +6,11 @@ import com.ahmedsameha1.todo.repository.UserAccountRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -22,20 +20,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 public class UserDetailsServiceImplTest {
-    @TestConfiguration
-    static class Config {
-        @Bean
-        public UserDetailsService userDetailsService() {
-            return new UserDetailsServiceImpl();
-        }
-    }
-    @MockBean
+    @Mock
     private UserAccountRepository userAccountRepository;
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    @InjectMocks
+    private UserDetailsService userDetailsService = new UserDetailsServiceImpl();
 
     @Test
     @DisplayName("Should fail because there is no UserAccount with this username")
