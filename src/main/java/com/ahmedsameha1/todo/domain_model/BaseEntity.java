@@ -28,9 +28,11 @@ public abstract class BaseEntity {
     @JsonIgnore
     private UUID id;
 
+    @JsonIgnore
     @CreationTimestamp
     private Instant creationTime;
 
+    @JsonIgnore
     @UpdateTimestamp
     private Instant updateTime;
 }
