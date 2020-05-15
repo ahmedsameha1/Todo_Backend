@@ -1,12 +1,10 @@
 package com.ahmedsameha1.todo.service;
 
-import com.ahmedsameha1.todo.domain_model.Gender;
 import com.ahmedsameha1.todo.domain_model.UserAccount;
 import com.ahmedsameha1.todo.email_verification.NeedEmailVerificationToken;
 import com.ahmedsameha1.todo.exception.UserExistsException;
 import com.ahmedsameha1.todo.repository.EmailVerificationTokenRepository;
 import com.ahmedsameha1.todo.repository.UserAccountRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,18 +12,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.time.LocalDate;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;

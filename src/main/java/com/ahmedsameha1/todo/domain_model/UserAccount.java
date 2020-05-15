@@ -1,7 +1,12 @@
 package com.ahmedsameha1.todo.domain_model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,6 +55,9 @@ public class UserAccount extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     private String email;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     @NotNull
     @Past
     @Column(nullable = false)
@@ -87,26 +95,29 @@ public class UserAccount extends BaseEntity implements UserDetails {
 
     @Version
     @Setter(value = AccessLevel.PRIVATE)
-    @Getter(value = AccessLevel.PRIVATE)
     @JsonIgnore
     @Column(nullable = false)
     private long version = 0L;
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return new ArrayList<>();
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return !expired;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return !locked;
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return !credentialsExpired;
