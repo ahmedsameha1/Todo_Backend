@@ -14,5 +14,6 @@ public class Constants {
         public static final short EXPIRED_EMAIL_VERIFICATION_TOKEN = 2;
         public static final short DISABLED_USER_ACCOUNT = 3;
         public static final short VALIDATION = 4;
+        public static final short USER_EXISTS = 5;
     }
 }

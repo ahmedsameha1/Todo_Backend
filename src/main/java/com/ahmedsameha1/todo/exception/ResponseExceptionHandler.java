@@ -31,6 +31,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                 null, request.getLocale()));
         errorResponse.setSuggestion(messageSource.getMessage("error.userExistsSuggestion",
                 null, request.getLocale()));
+        errorResponse.setCode(USER_EXISTS);
         errorResponse.setPath(request.getRequestURI());
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
