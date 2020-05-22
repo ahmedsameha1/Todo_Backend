@@ -166,6 +166,108 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
                         );
             }
         }
+
+        @Nested
+        @DisplayName("Password tests")
+        class Password {
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that doesn't have a password")
+            public void test1() throws Exception {
+                var json = jsonedUserAccount().replace(",\"password\":\"ffffff3Q\"}", "}");
+                callEndpoint(json);
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has password that contains only whitespace")
+            public void test2() throws Exception {
+                var json = jsonedUserAccount().replace("ffffff3Q", "                           ");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "\\t\\t\\n\\t\\t\\t\\t\\n\\t\\t\\t\\t\\t\\t\\t");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "\\t\\t\\t\\t\\t\\t\\t\\n\\t\\t\\t\\t\\n\\t\\t");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "\\t\\t\\t\\t\\t\\t\\t \\t\\t\\t\\t \\t\\t");
+                callEndpoint(json);
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has password that contains less than 8 characters")
+            public void test3() throws Exception {
+                var json = jsonedUserAccount().replace("ffffff3Q", "fffff3Q");
+                callEndpoint(json);
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has password that contains more than 255 characters")
+            public void test4() throws Exception {
+                var json = jsonedUserAccount().replace("ffffff3Q", "f3Q" + "f".repeat(253));
+                callEndpoint(json);
+
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has password that has whitespace")
+            public void test5() throws Exception {
+                var json = jsonedUserAccount().replace("ffffff3Q", "tuaaaaaa aaaaaaaaaaaa");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", " tupppppppppppppppppppp");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "qqqqqqqqqqqqqqqqqqqqqqqtu ");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "\\rqqqqqqqqqqqqqqqqqqqqqqqqqtu ");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "\\tqqqqqq\\rqqqqqqqqqqqqqqqqqqtu ");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "qqqqqqq\\tqqqqqqqqqqqqqqqtu ");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "\\rqqqqqqqqqqqqqqqqqqqqqqqtu\\n");
+                callEndpoint(json);
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body must be a json that has a password that has at least one lowercase character"
+                    + "and at least one uppercase character"
+                    + "and at least one digit")
+            public void test7() throws Exception {
+                var json = jsonedUserAccount().replace("ffffff3Q", "qqqqqqqqqqqq");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "QQQQQQQQQQQQ");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "333333333333");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "qqqqqqqqqqqqQ");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "qqqqqqqqqqqq3");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "33333333333q");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "33333333333Q");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "QQQQQQQQQQQq");
+                callEndpoint(json);
+                json = jsonedUserAccount().replace("ffffff3Q", "QQQQQQQQQQQ3");
+                callEndpoint(json);
+            }
+
+            private void callEndpoint(String json) throws Exception {
+                when(messageSource.getMessage(eq("error.validation"), isNotNull(), eq(Locale.getDefault()))).thenReturn(message);
+                mockMvc.perform(post(SIGN_UP_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json).locale(Locale.getDefault()))
+                        .andExpect(matchAll(
+                                status().isBadRequest(),
+                                jsonPath("$.code", Matchers.is((int) VALIDATION)),
+                                jsonPath("$.message", Matchers.is(message)),
+                                jsonPath("validationErrors", hasItem(Matchers.containsString("password"))))
+                        );
+            }
+        }
     }
 
     private String jsonedUserAccount() throws JsonProcessingException {
