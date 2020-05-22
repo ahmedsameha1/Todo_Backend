@@ -83,6 +83,40 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
             verify(userAccountService).registerUserAccount(eq(userAccount), any(HttpServletRequest.class));
         }
 
+        @Test
+        @DisplayName("Should fail because the sent request doesn't have a content type header of json")
+        public void test2() throws Exception {
+            mockMvc.perform(post(SIGN_UP_URL)
+                    .content(jsonedUserAccount()).locale(Locale.getDefault()))
+                    .andExpect(status().isUnsupportedMediaType());
+        }
+
+        @Test
+        @DisplayName("Should fail because the sent request doesn't have a content type header of json")
+        public void test3() throws Exception {
+            mockMvc.perform(post(SIGN_UP_URL)
+                    .contentType(MediaType.APPLICATION_XML)
+                    .content(jsonedUserAccount()).locale(Locale.getDefault()))
+                    .andExpect(status().isUnsupportedMediaType());
+        }
+
+        @Test
+        @DisplayName("Should fail because the sent request doesn't have a body")
+        public void test4() throws Exception {
+            mockMvc.perform(post(SIGN_UP_URL)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should fail because the sent request body isn't a valid json")
+        public void test5() throws Exception {
+            mockMvc.perform(post(SIGN_UP_URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonedUserAccount().replace("}", ")")).locale(Locale.getDefault()))
+                    .andExpect(status().isBadRequest());
+        }
+
         @Nested
         class Username {
             @Test
