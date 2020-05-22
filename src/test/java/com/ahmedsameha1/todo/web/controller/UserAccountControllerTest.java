@@ -82,59 +82,59 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
             @DisplayName("Should fail because the sent request body is a json that doesn't have a username")
             public void test1() throws Exception {
                 userAccount.setUsername(null);
-                callEndPoint();
+                callEndPoint("username");
             }
 
             @Test
             @DisplayName("Should fail because the sent request body is a json that has an empty username")
             public void test2() throws Exception {
                 userAccount.setUsername("");
-                callEndPoint();
+                callEndPoint("username");
             }
 
             @Test
             @DisplayName("Should fail because the sent request body is a json that has a username that contains only whitespace")
             public void test3() throws Exception {
                 userAccount.setUsername("  ");
-                callEndPoint();
+                callEndPoint("username");
                 userAccount.setUsername("\n");
-                callEndPoint();
+                callEndPoint("username");
                 userAccount.setUsername("\r");
-                callEndPoint();
+                callEndPoint("username");
                 userAccount.setUsername("\t");
-                callEndPoint();
+                callEndPoint("username");
                 userAccount.setUsername("\t\n");
-                callEndPoint();
+                callEndPoint("username");
                 userAccount.setUsername("\t\r");
-                callEndPoint();
+                callEndPoint("username");
                 userAccount.setUsername("\r\n");
-                callEndPoint();
+                callEndPoint("username");
                 userAccount.setUsername("\r ");
-                callEndPoint();
+                callEndPoint("username");
             }
 
             @Test
             @DisplayName("Should fail because the sent request body is a json that has a username that has more than 50 characters")
             public void test4() throws Exception {
                 userAccount.setUsername("f".repeat(51));
-                callEndPoint();
+                callEndPoint("username");
             }
 
             @Test
             @DisplayName("Should fail because the sent request body is a json that has a username that has whitespace")
             public void test5() throws Exception {
                 userAccount.setUsername("t u");
-                callEndPoint();
+                callEndPoint("username");
                 userAccount.setUsername(" tu");
-                callEndPoint();
+                callEndPoint("username");
                 userAccount.setUsername("tu ");
-                callEndPoint();
+                callEndPoint("username");
                 userAccount.setUsername("tu\t");
-                callEndPoint();
+                callEndPoint("username");
                 userAccount.setUsername("\ntu ");
-                callEndPoint();
+                callEndPoint("username");
                 userAccount.setUsername("\tt u\r");
-                callEndPoint();
+                callEndPoint("username");
             }
 
             @Test
@@ -150,19 +150,6 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
                                 status().isConflict(),
                                 jsonPath("$.code", Matchers.is((int) USER_EXISTS)),
                                 jsonPath("$.message", Matchers.is(message)))
-                        );
-            }
-
-            private void callEndPoint() throws Exception {
-                when(messageSource.getMessage(eq("error.validation"), isNotNull(), any(Locale.class))).thenReturn(message);
-                mockMvc.perform(post(SIGN_UP_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonedUserAccount()).locale(Locale.getDefault()))
-                        .andExpect(matchAll(
-                                status().isBadRequest(),
-                                jsonPath("$.code", Matchers.is((int) VALIDATION)),
-                                jsonPath("$.message", Matchers.is(message)),
-                                jsonPath("validationErrors", hasItem(Matchers.containsString("username"))))
                         );
             }
         }
@@ -268,10 +255,93 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
                         );
             }
         }
+
+        @Nested
+        class FirstName {
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that doesn't has a firstName")
+            public void test1() throws Exception {
+                userAccount.setFirstName(null);
+                callEndPoint("firstName");
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has an empty firstName")
+            public void test2() throws Exception {
+               userAccount.setFirstName("");
+               callEndPoint("firstName");
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has a firstName that contains only whitespace")
+            public void test3() throws Exception {
+                userAccount.setFirstName("  ");
+                callEndPoint("firstName");
+                userAccount.setFirstName("\n");
+                callEndPoint("firstName");
+                userAccount.setFirstName("\r");
+                callEndPoint("firstName");
+                userAccount.setFirstName("\t");
+                callEndPoint("firstName");
+                userAccount.setFirstName("\t\r");
+                callEndPoint("firstName");
+                userAccount.setFirstName("\t\n");
+                callEndPoint("firstName");
+                userAccount.setFirstName("\t ");
+                callEndPoint("firstName");
+                userAccount.setFirstName(" \n");
+                callEndPoint("firstName");
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has a firstName that has more than 100 characters")
+            public void test4() throws Exception {
+                userAccount.setFirstName("f".repeat(101));
+                callEndPoint("firstName");
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has a firstName that has whitespace either at the start or at the end")
+            public void test5() throws Exception {
+                userAccount.setFirstName(" fff");
+                callEndPoint("firstName");
+                userAccount.setFirstName("fff ");
+                callEndPoint("firstName");
+                userAccount.setFirstName("\tfff");
+                callEndPoint("firstName");
+                userAccount.setFirstName("fff\t");
+                callEndPoint("firstName");
+                userAccount.setFirstName("\nfff");
+                callEndPoint("firstName");
+                userAccount.setFirstName("fff\n");
+                callEndPoint("firstName");
+                userAccount.setFirstName("\rfff");
+                callEndPoint("firstName");
+                userAccount.setFirstName("fff\r");
+                callEndPoint("firstName");
+                userAccount.setFirstName("\nfff\r");
+                callEndPoint("firstName");
+                userAccount.setFirstName(" fff\t");
+                callEndPoint("firstName");
+            }
+        }
     }
 
     private String jsonedUserAccount() throws JsonProcessingException {
         var json = objectMapper.writeValueAsString(userAccount);
         return json.replace("}", ",\"password\":\"ffffff3Q\"}");
+    }
+
+    private void callEndPoint(String field) throws Exception {
+        when(messageSource.getMessage(eq("error.validation"), isNotNull(), any(Locale.class))).thenReturn(message);
+        mockMvc.perform(post(SIGN_UP_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonedUserAccount()).locale(Locale.getDefault()))
+                .andExpect(matchAll(
+                        status().isBadRequest(),
+                        jsonPath("$.code", Matchers.is((int) VALIDATION)),
+                        jsonPath("$.message", Matchers.is(message)),
+                        jsonPath("validationErrors", hasItem(Matchers.containsString(field))))
+                );
     }
 }
