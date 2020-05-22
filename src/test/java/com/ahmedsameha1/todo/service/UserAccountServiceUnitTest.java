@@ -17,6 +17,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
@@ -84,9 +85,11 @@ public class UserAccountServiceUnitTest {
         public void test5() {
             when(userAccount.getUsername()).thenReturn("fff");
             when(userAccountRepository.findByUsername(anyString())).thenReturn(null);
+            when(userAccountRepository.save(userAccount)).thenReturn(userAccount);
             when(userAccount.getPassword()).thenReturn("ffff");
             when(bCryptPasswordEncoder.encode(anyString())).thenReturn("ffff");
-            userAccountService.registerUserAccount(userAccount, new MockHttpServletRequest());
+            var returnedUserAccount = userAccountService.registerUserAccount(userAccount, new MockHttpServletRequest());
+            assertThat(returnedUserAccount).isEqualTo(userAccount);
             verify(userAccount).setPassword(anyString());
             verify(userAccountRepository).save(userAccount);
             verify(applicationEventPublisher).publishEvent(any(NeedEmailVerificationToken.class));

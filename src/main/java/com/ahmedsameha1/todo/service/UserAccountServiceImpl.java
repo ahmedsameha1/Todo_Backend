@@ -53,18 +53,19 @@ public class UserAccountServiceImpl implements UserAccountService {
     private String jwtSecret;
 
     @Override
-    public void registerUserAccount(UserAccount userAccount,
+    public UserAccount registerUserAccount(UserAccount userAccount,
                                     HttpServletRequest request)
             throws UserExistsException {
         if (userAccountRepository.findByUsername(userAccount.getUsername()) != null) {
             throw new UserExistsException();
         }
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
-        userAccountRepository.save(userAccount);
+        userAccount = userAccountRepository.save(userAccount);
         var appUrl = request.getScheme() + "://" + request.getServerName()
                 + ":" + request.getServerPort() + request.getContextPath();
         applicationEventPublisher
                 .publishEvent(new NeedEmailVerificationToken(userAccount, appUrl, request.getLocale()));
+        return userAccount;
     }
 
     @Override

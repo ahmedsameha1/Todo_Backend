@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.Map;
 
 import static com.ahmedsameha1.todo.Constants.*;
@@ -23,11 +24,9 @@ public class UserAccountController {
     private MessageSource messageSource;
 
     @PostMapping(SIGN_UP_URL)
-    public ResponseEntity<?> signUp(@RequestBody @Valid UserAccount userAccount, HttpServletRequest request) {
-        userAccountService.registerUserAccount(userAccount, request);
-        String message = messageSource.getMessage("signUpSuccessfullyMessage",
-                null, request.getLocale());
-        return ResponseEntity.ok(message);
+    public ResponseEntity<UserAccount> signUp(@RequestBody @Valid UserAccount userAccount, HttpServletRequest request) {
+        userAccount = userAccountService.registerUserAccount(userAccount, request);
+        return ResponseEntity.created(URI.create("/user_account")).body(userAccount);
     }
 
     @GetMapping(EMAIL_VERIFICATION_URL)

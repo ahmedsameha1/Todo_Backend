@@ -8,10 +8,7 @@ import com.ahmedsameha1.todo.service.UserAccountService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -29,8 +27,7 @@ import static com.ahmedsameha1.todo.Constants.ErrorCode.VALIDATION;
 import static com.ahmedsameha1.todo.Constants.SIGN_UP_URL;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.ResultMatcher.matchAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -68,12 +65,22 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
         @Test
         @DisplayName("Should pass because the sent request body is a json that represents a valid UserAccount")
         public void test1() throws Exception {
-            when(messageSource.getMessage(eq("signUpSuccessfullyMessage"), isNull(), eq(Locale.getDefault()))).thenReturn(message);
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(userAccount);
             mockMvc.perform(post(SIGN_UP_URL)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(jsonedUserAccount()).locale(Locale.getDefault()))
-                    .andExpect(status().isOk())
-                    .andExpect(content().string(message));
+                    .andExpect(matchAll(
+                            status().isCreated(),
+                            header().string("Location", "/user_account"),
+                            jsonPath("$.username", Matchers.is(userAccount.getUsername())),
+                            jsonPath("$.firstName", Matchers.is(userAccount.getFirstName())),
+                            jsonPath("$.lastName", Matchers.is(userAccount.getLastName())),
+                            jsonPath("$.gender", Matchers.is(userAccount.getGender().toString())),
+                            jsonPath("$.email", Matchers.is(userAccount.getEmail())),
+                            jsonPath("$.birthDay", Matchers.is(userAccount.getBirthDay().format(dateTimeFormatter)))
+                    ));
+            verify(userAccountService).registerUserAccount(eq(userAccount), any(HttpServletRequest.class));
         }
 
         @Nested
@@ -151,6 +158,7 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
                                 jsonPath("$.code", Matchers.is((int) USER_EXISTS)),
                                 jsonPath("$.message", Matchers.is(message)))
                         );
+                verify(userAccountService).registerUserAccount(eq(userAccount), any(HttpServletRequest.class));
             }
         }
 
@@ -251,7 +259,7 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
                                 status().isBadRequest(),
                                 jsonPath("$.code", Matchers.is((int) VALIDATION)),
                                 jsonPath("$.message", Matchers.is(message)),
-                                jsonPath("validationErrors", hasItem(Matchers.containsString("password"))))
+                                jsonPath("$.validationErrors", hasItem(Matchers.containsString("password"))))
                         );
             }
         }
@@ -341,7 +349,7 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
                         status().isBadRequest(),
                         jsonPath("$.code", Matchers.is((int) VALIDATION)),
                         jsonPath("$.message", Matchers.is(message)),
-                        jsonPath("validationErrors", hasItem(Matchers.containsString(field))))
+                        jsonPath("$.validationErrors", hasItem(Matchers.containsString(field))))
                 );
     }
 }
