@@ -496,16 +496,16 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
             userAccount.setEmail("        ");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
-            userAccount.setEmail("\n\n\n\n\n");
+            userAccount.setEmail("\n\n\n\n\n\n");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
-            userAccount.setEmail("\r\r\r\r\r");
+            userAccount.setEmail("\r\r\r\r\r\r");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
-            userAccount.setEmail("\t\t\t\t\t");
+            userAccount.setEmail("\t\t\t\t\t\t");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
-            userAccount.setEmail("\t\r\t\r\t");
+            userAccount.setEmail("\t\r\t\r\t\t");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
             userAccount.setEmail("\t\n\t\t\n\t\t");
