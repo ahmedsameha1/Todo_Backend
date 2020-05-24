@@ -8,7 +8,10 @@ import com.ahmedsameha1.todo.service.UserAccountService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -310,8 +313,8 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
             @Test
             @DisplayName("Should fail because the sent request body is a json that has an empty firstName")
             public void test2() throws Exception {
-               userAccount.setFirstName("");
-               callEndPoint("firstName");
+                userAccount.setFirstName("");
+                callEndPoint("firstName");
             }
 
             @Test
@@ -365,6 +368,76 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
                 callEndPoint("firstName");
                 userAccount.setFirstName(" fff\t");
                 callEndPoint("firstName");
+            }
+        }
+
+        @Nested
+        class LastName {
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that doesn't has a lastName")
+            public void test1() throws Exception {
+                userAccount.setLastName(null);
+                callEndPoint("lastName");
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has an empty lastName")
+            public void test2() throws Exception {
+                userAccount.setLastName("");
+                callEndPoint("lastName");
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has a lastName that contains only whitespace")
+            public void test3() throws Exception {
+                userAccount.setLastName("  ");
+                callEndPoint("lastName");
+                userAccount.setLastName("\n");
+                callEndPoint("lastName");
+                userAccount.setLastName("\r");
+                callEndPoint("lastName");
+                userAccount.setLastName("\t");
+                callEndPoint("lastName");
+                userAccount.setLastName("\t\r");
+                callEndPoint("lastName");
+                userAccount.setLastName("\t\n");
+                callEndPoint("lastName");
+                userAccount.setLastName("\t ");
+                callEndPoint("lastName");
+                userAccount.setLastName(" \n");
+                callEndPoint("lastName");
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has a lastName that has more than 100 characters")
+            public void test4() throws Exception {
+                userAccount.setLastName("f".repeat(101));
+                callEndPoint("lastName");
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has a lastName that has whitespace either at the start or at the end")
+            public void test5() throws Exception {
+                userAccount.setLastName(" fff");
+                callEndPoint("lastName");
+                userAccount.setLastName("fff ");
+                callEndPoint("lastName");
+                userAccount.setLastName("\tfff");
+                callEndPoint("lastName");
+                userAccount.setLastName("fff\t");
+                callEndPoint("lastName");
+                userAccount.setLastName("\nfff");
+                callEndPoint("lastName");
+                userAccount.setLastName("fff\n");
+                callEndPoint("lastName");
+                userAccount.setLastName("\rfff");
+                callEndPoint("lastName");
+                userAccount.setLastName("fff\r");
+                callEndPoint("lastName");
+                userAccount.setLastName("\nfff\r");
+                callEndPoint("lastName");
+                userAccount.setLastName(" fff\t");
+                callEndPoint("lastName");
             }
         }
     }
