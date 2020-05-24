@@ -518,7 +518,7 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
 
         @Test
         @DisplayName("Should fail because email length is more than 255 character")
-        public void test4() {
+        public void test3() {
             userAccount.setEmail("a@a.aa" + "a".repeat(250));
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
@@ -526,7 +526,7 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
 
         @Test
         @DisplayName("Should fail because email has whitespace")
-        public void test5() {
+        public void test4() {
             userAccount.setEmail(" a@a.aa");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
@@ -551,11 +551,8 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
         }
 
         @Test
-        @DisplayName("Should fail because email must have one @ character"
-                + "and one . character"
-                + "and ends with two characters from a to z"
-                + "and the . must follow the @ and the last two characters must follow the .")
-        public void test6() {
+        @DisplayName("Should fail because email doesn't conform to the specified regex")
+        public void test5() {
             userAccount.setEmail("aaaa.aa");
             assertThatThrownBy(() -> userAccountRepository.save(userAccount))
                     .hasRootCauseInstanceOf(ConstraintViolationException.class);
@@ -581,7 +578,7 @@ public class UserAccountRepositoryTest extends ProductionDatabaseBaseTest {
 
         @Test
         @DisplayName("should pass because email is valid")
-        public void test7() {
+        public void test6() {
             userAccount.setEmail("a@a.aa");
             assertThatCode(() -> userAccountRepository.save(userAccount)).doesNotThrowAnyException();
 

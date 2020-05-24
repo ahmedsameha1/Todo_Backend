@@ -440,6 +440,80 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
                 callEndPoint("lastName");
             }
         }
+
+        @Nested
+        class Email {
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that doesn't has an email")
+            public void test1() throws Exception {
+                userAccount.setEmail(null);
+                callEndPoint("email");
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has an email that contains only whitespace")
+            public void test2() throws Exception {
+                userAccount.setEmail("        ");
+                callEndPoint("email");
+                userAccount.setEmail("\n\n\n\n\n\n");
+                callEndPoint("email");
+                userAccount.setEmail("\r\r\r\r\r\r");
+                callEndPoint("email");
+                userAccount.setEmail("\t\t\t\t\t\t");
+                callEndPoint("email");
+                userAccount.setEmail("\t\r\t\r\t\t");
+                callEndPoint("email");
+                userAccount.setEmail("\t\n\t\t\n\t\t");
+                callEndPoint("email");
+                userAccount.setEmail("\t\t \t \t\t");
+                callEndPoint("email");
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has an email that has more than 255 characters")
+            public void test3() throws Exception {
+                userAccount.setEmail("a@a.aa" + "a".repeat(250));
+                callEndPoint("email");
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has an email that has whitespace")
+            public void test4() throws Exception {
+                userAccount.setEmail(" a@a.aa");
+                callEndPoint("email");
+                userAccount.setEmail("a@a.aa ");
+                callEndPoint("email");
+                userAccount.setEmail(" a@a .aa  ");
+                callEndPoint("email");
+                userAccount.setEmail("a\r@a.aa");
+                callEndPoint("email");
+                userAccount.setEmail("\ta@a.aa");
+                callEndPoint("email");
+                userAccount.setEmail("a @\na.aa");
+                callEndPoint("email");
+                userAccount.setEmail("\ra@a.aa\n");
+                callEndPoint("email");
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that has an email that doesn't conform to the specified regex")
+            public void test5() throws Exception {
+                userAccount.setEmail("aaaa.aa");
+                callEndPoint("email");
+                userAccount.setEmail("a@aaaa.");
+                callEndPoint("email");
+                userAccount.setEmail("a@a.a");
+                callEndPoint("email");
+                userAccount.setEmail("aaaaaaaa");
+                callEndPoint("email");
+                userAccount.setEmail("a.a@aa");
+                callEndPoint("email");
+                userAccount.setEmail(".aaa@aaa");
+                callEndPoint("email");
+                userAccount.setEmail("@aaa.aa");
+                callEndPoint("email");
+            }
+        }
     }
 
     private String jsonedUserAccount() throws JsonProcessingException {
