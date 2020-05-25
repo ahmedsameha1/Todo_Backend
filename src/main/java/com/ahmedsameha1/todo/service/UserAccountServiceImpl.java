@@ -54,18 +54,31 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public UserAccount registerUserAccount(UserAccount userAccount,
-                                    HttpServletRequest request)
+                                    HttpServletRequest httpServletRequest)
             throws UserExistsException {
+        throwExceptionIfUserAccountWithTakenUsername(userAccount);
+        userAccount = saveUserAccount(userAccount);
+        sendEmailUponUserAccountRegistration(userAccount, httpServletRequest);
+        return userAccount;
+    }
+
+    private void throwExceptionIfUserAccountWithTakenUsername(UserAccount userAccount) {
         if (userAccountRepository.findByUsername(userAccount.getUsername()) != null) {
             throw new UserExistsException();
         }
+    }
+
+    private UserAccount saveUserAccount(UserAccount userAccount) {
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
-        userAccount = userAccountRepository.save(userAccount);
-        var appUrl = request.getScheme() + "://" + request.getServerName()
-                + ":" + request.getServerPort() + request.getContextPath();
+        return userAccountRepository.save(userAccount);
+    }
+
+    private void sendEmailUponUserAccountRegistration(UserAccount userAccount,
+                                                      HttpServletRequest httpServletRequest) {
+        var appUrl = httpServletRequest.getScheme() + "://" + httpServletRequest.getServerName()
+                + ":" + httpServletRequest.getServerPort() + httpServletRequest.getContextPath();
         applicationEventPublisher
-                .publishEvent(new NeedEmailVerificationToken(userAccount, appUrl, request.getLocale()));
-        return userAccount;
+                .publishEvent(new NeedEmailVerificationToken(userAccount, appUrl, httpServletRequest.getLocale()));
     }
 
     @Override
