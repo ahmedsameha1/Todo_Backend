@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.ahmedsameha1.todo.Constants.*;
 
@@ -30,7 +31,7 @@ public class UserAccountController {
     }
 
     @GetMapping(EMAIL_VERIFICATION_URL)
-    public ResponseEntity<?> emailVerification(@RequestParam("token") String token,
+    public ResponseEntity<?> emailVerification(@RequestParam("token") UUID token,
                                                HttpServletRequest request) {
         userAccountService.handleUserAccountEnablingProcess(token, request);
         return ResponseEntity.ok().build();

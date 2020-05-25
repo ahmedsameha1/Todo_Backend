@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface EmailVerificationTokenRepository extends JpaRepository<EmailVerificationToken, UUID> {
-    EmailVerificationToken findByToken(String token);
+    EmailVerificationToken findByToken(UUID token);
     EmailVerificationToken findByUserAccount(UserAccount userAccount);
 }

@@ -82,7 +82,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public void handleUserAccountEnablingProcess(String token, HttpServletRequest httpServletRequest) {
+    public void handleUserAccountEnablingProcess(UUID token, HttpServletRequest httpServletRequest) {
         var emailVerificationToken = emailVerificationTokenRepository.findByToken(token);
         if (validateEmailVerificationToken(emailVerificationToken, httpServletRequest)) {
             enableUserAccount(emailVerificationToken);
