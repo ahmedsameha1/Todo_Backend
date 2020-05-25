@@ -65,10 +65,11 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
     @Nested
     @DisplayName("SignUp Tests")
     class SignUp {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
         @Test
         @DisplayName("Should pass because the sent request body is a json that represents a valid UserAccount")
         public void test1() throws Exception {
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(userAccount);
             mockMvc.perform(post(SIGN_UP_URL)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -92,11 +93,6 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
             mockMvc.perform(post(SIGN_UP_URL)
                     .content(jsonedUserAccount()).locale(Locale.getDefault()))
                     .andExpect(status().isUnsupportedMediaType());
-        }
-
-        @Test
-        @DisplayName("Should fail because the sent request doesn't have a content type header of json")
-        public void test3() throws Exception {
             mockMvc.perform(post(SIGN_UP_URL)
                     .contentType(MediaType.APPLICATION_XML)
                     .content(jsonedUserAccount()).locale(Locale.getDefault()))
@@ -105,7 +101,7 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
 
         @Test
         @DisplayName("Should fail because the sent request doesn't have a body")
-        public void test4() throws Exception {
+        public void test3() throws Exception {
             mockMvc.perform(post(SIGN_UP_URL)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest());
@@ -113,11 +109,53 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
 
         @Test
         @DisplayName("Should fail because the sent request body isn't a valid json")
-        public void test5() throws Exception {
+        public void test4() throws Exception {
             mockMvc.perform(post(SIGN_UP_URL)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(jsonedUserAccount().replace("}", ")")).locale(Locale.getDefault()))
                     .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should pass because ignorance of UserAccount fields that not allowed to be handled by user input directly")
+        public void test5() throws Exception {
+            when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(userAccount);
+            var json = jsonedUserAccount().replace("}", ",\"enabled\":true}");
+            mockMvc.perform(post(SIGN_UP_URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json).locale(Locale.getDefault()))
+                    .andExpect(matchAll(
+                            status().isCreated(),
+                            header().string("Location", "/user_account"),
+                            jsonPath("$.username", Matchers.is(userAccount.getUsername())),
+                            jsonPath("$.firstName", Matchers.is(userAccount.getFirstName())),
+                            jsonPath("$.lastName", Matchers.is(userAccount.getLastName())),
+                            jsonPath("$.gender", Matchers.is(userAccount.getGender().toString())),
+                            jsonPath("$.email", Matchers.is(userAccount.getEmail())),
+                            jsonPath("$.birthDay", Matchers.is(userAccount.getBirthDay().format(dateTimeFormatter)))
+                    ));
+            verify(userAccountService).registerUserAccount(eq(userAccount), any(HttpServletRequest.class));
+        }
+
+        @Test
+        @DisplayName("Should pass because ignorance of unknown fields")
+        public void test6() throws Exception {
+            when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(userAccount);
+            var json = jsonedUserAccount().replace("}", ",\"unknown\":99}");
+            mockMvc.perform(post(SIGN_UP_URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json).locale(Locale.getDefault()))
+                    .andExpect(matchAll(
+                            status().isCreated(),
+                            header().string("Location", "/user_account"),
+                            jsonPath("$.username", Matchers.is(userAccount.getUsername())),
+                            jsonPath("$.firstName", Matchers.is(userAccount.getFirstName())),
+                            jsonPath("$.lastName", Matchers.is(userAccount.getLastName())),
+                            jsonPath("$.gender", Matchers.is(userAccount.getGender().toString())),
+                            jsonPath("$.email", Matchers.is(userAccount.getEmail())),
+                            jsonPath("$.birthDay", Matchers.is(userAccount.getBirthDay().format(dateTimeFormatter)))
+                    ));
+            verify(userAccountService).registerUserAccount(eq(userAccount), any(HttpServletRequest.class));
         }
 
         @Nested
@@ -291,7 +329,8 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
                 when(messageSource.getMessage(eq("error.validation"), isNotNull(), eq(Locale.getDefault()))).thenReturn(message);
                 mockMvc.perform(post(SIGN_UP_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json).locale(Locale.getDefault()))
+                        .content(json)
+                        .locale(Locale.getDefault()))
                         .andExpect(matchAll(
                                 status().isBadRequest(),
                                 jsonPath("$.code", Matchers.is((int) VALIDATION)),
@@ -550,7 +589,8 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
                 when(messageSource.getMessage(eq("error.validation"), isNotNull(), eq(Locale.getDefault()))).thenReturn(message);
                 mockMvc.perform(post(SIGN_UP_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json).locale(Locale.getDefault()))
+                        .content(json)
+                        .locale(Locale.getDefault()))
                         .andExpect(status().isBadRequest());
             }
         }
@@ -565,7 +605,8 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
         when(messageSource.getMessage(eq("error.validation"), isNotNull(), any(Locale.class))).thenReturn(message);
         mockMvc.perform(post(SIGN_UP_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonedUserAccount()).locale(Locale.getDefault()))
+                .content(jsonedUserAccount())
+                .locale(Locale.getDefault()))
                 .andExpect(matchAll(
                         status().isBadRequest(),
                         jsonPath("$.code", Matchers.is((int) VALIDATION)),
