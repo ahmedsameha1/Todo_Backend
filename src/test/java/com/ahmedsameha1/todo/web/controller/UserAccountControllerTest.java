@@ -514,6 +514,46 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
                 callEndPoint("email");
             }
         }
+
+        @Nested
+        class BirthDay {
+            @Test
+            @DisplayName("Should fail because the sent request body is a json that doesn't has a birthDay")
+            public void test1() throws Exception {
+                userAccount.setBirthDay(null);
+                callEndPoint("birthDay");
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent body is a json that has birthDay that doesn't conform to the specified pattern")
+            public void test2() throws Exception {
+                var json = jsonedUserAccount().replace("2010-10-10", "2010/10/10");
+                this.callEndpoint(json);
+                json = jsonedUserAccount().replace("2010-10-10", "10-10-2010");
+                this.callEndpoint(json);
+                json = jsonedUserAccount().replace("2010-10-10", "10/10/2010");
+                this.callEndpoint(json);
+                json = jsonedUserAccount().replace("2010-10-10", "2010-13-10");
+                this.callEndpoint(json);
+                json = jsonedUserAccount().replace("2010-10-10", "2010-10-32");
+                this.callEndpoint(json);
+            }
+
+            @Test
+            @DisplayName("Should fail because the sent body is a json that has birthDay that isn't at the past")
+            public void test3() throws Exception {
+                userAccount.setBirthDay(LocalDate.now().plusDays(1));
+                callEndPoint("birthDay");
+            }
+
+            private void callEndpoint(String json) throws Exception {
+                when(messageSource.getMessage(eq("error.validation"), isNotNull(), eq(Locale.getDefault()))).thenReturn(message);
+                mockMvc.perform(post(SIGN_UP_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json).locale(Locale.getDefault()))
+                        .andExpect(status().isBadRequest());
+            }
+        }
     }
 
     private String jsonedUserAccount() throws JsonProcessingException {
