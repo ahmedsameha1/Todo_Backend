@@ -165,6 +165,7 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
             public void test1() throws Exception {
                 userAccount.setUsername(null);
                 callEndPoint("username");
+                callEndPointIgnoreNull("username");
             }
 
             @Test
@@ -347,6 +348,7 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
             public void test1() throws Exception {
                 userAccount.setFirstName(null);
                 callEndPoint("firstName");
+                callEndPointIgnoreNull("firstName");
             }
 
             @Test
@@ -417,6 +419,7 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
             public void test1() throws Exception {
                 userAccount.setLastName(null);
                 callEndPoint("lastName");
+                callEndPointIgnoreNull("lastName");
             }
 
             @Test
@@ -487,6 +490,7 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
             public void test1() throws Exception {
                 userAccount.setEmail(null);
                 callEndPoint("email");
+                callEndPointIgnoreNull("email");
             }
 
             @Test
@@ -561,6 +565,7 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
             public void test1() throws Exception {
                 userAccount.setBirthDay(null);
                 callEndPoint("birthDay");
+                callEndPointIgnoreNull("birthDay");
             }
 
             @Test
@@ -606,6 +611,23 @@ class UserAccountControllerTest extends ProductionDatabaseBaseTest {
         mockMvc.perform(post(SIGN_UP_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonedUserAccount())
+                .locale(Locale.getDefault()))
+                .andExpect(matchAll(
+                        status().isBadRequest(),
+                        jsonPath("$.code", Matchers.is((int) VALIDATION)),
+                        jsonPath("$.message", Matchers.is(message)),
+                        jsonPath("$.validationErrors", hasItem(Matchers.containsString(field))))
+                );
+    }
+
+    private void callEndPointIgnoreNull(String field) throws Exception {
+        var json = jsonedUserAccount();
+        json = json.replace("\"" + field + "\":null,", "");
+        json = json.replace("\"" + field + "\":null", "");
+        when(messageSource.getMessage(eq("error.validation"), isNotNull(), any(Locale.class))).thenReturn(message);
+        mockMvc.perform(post(SIGN_UP_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
                 .locale(Locale.getDefault()))
                 .andExpect(matchAll(
                         status().isBadRequest(),
