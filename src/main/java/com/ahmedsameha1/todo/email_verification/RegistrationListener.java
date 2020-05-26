@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import static com.ahmedsameha1.todo.Constants.EMAIL_VERIFICATION_URL;
@@ -24,19 +25,22 @@ public class RegistrationListener implements ApplicationListener<NeedEmailVerifi
     @Autowired
     private MessageSource messageSource;
 
+    @Async
     @Override
     public void onApplicationEvent(NeedEmailVerificationToken event) {
         UserAccount userAccount = event.getUserAccount();
         EmailVerificationToken emailVerificationToken = userAccountService.createEmailVerificationToken(userAccount);
-        var userAccountEmail = userAccount.getEmail();
-        var emailSubject = "Registration Confirmation";
         var emailVerificationUrl = event.getAppUrl()
                 + EMAIL_VERIFICATION_URL + "?token=" + emailVerificationToken.getToken();
-        var email = new SimpleMailMessage();
-        email.setTo(userAccountEmail);
-        email.setSubject(emailSubject);
         var emailVerificationMessage = messageSource.getMessage("emailVerificationMessage",
                 null, event.getLocale());
+        sendEmail(userAccount, emailVerificationMessage, emailVerificationUrl);
+    }
+
+    private void sendEmail(UserAccount userAccount, String emailVerificationMessage, String emailVerificationUrl) {
+        var email = new SimpleMailMessage();
+        email.setTo(userAccount.getEmail());
+        email.setSubject("Registration Confirmation");
         email.setText(emailVerificationMessage + "\r\n" + emailVerificationUrl);
         javaMailSender.send(email);
     }
