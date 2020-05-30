@@ -328,6 +328,7 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
 
             private void callEndpoint(String json) throws Exception {
                 when(messageSource.getMessage(eq("error.validation"), isNotNull(), eq(Locale.getDefault()))).thenReturn(message);
+                when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(null);
                 mockMvc.perform(post(SIGN_UP_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
@@ -338,6 +339,7 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
                                 jsonPath("$.message", Matchers.is(message)),
                                 jsonPath("$.validationErrors", hasItem(Matchers.containsString("password"))))
                         );
+                verify(userAccountService, never()).registerUserAccount(eq(userAccount), any(HttpServletRequest.class));
             }
         }
 
@@ -592,11 +594,13 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
 
             private void callEndpoint(String json) throws Exception {
                 when(messageSource.getMessage(eq("error.validation"), isNotNull(), eq(Locale.getDefault()))).thenReturn(message);
+                when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(null);
                 mockMvc.perform(post(SIGN_UP_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .locale(Locale.getDefault()))
                         .andExpect(status().isBadRequest());
+                verify(userAccountService, never()).registerUserAccount(eq(userAccount), any(HttpServletRequest.class));
             }
         }
     }
@@ -608,6 +612,7 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
 
     private void callEndPoint(String field) throws Exception {
         when(messageSource.getMessage(eq("error.validation"), isNotNull(), any(Locale.class))).thenReturn(message);
+        when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(null);
         mockMvc.perform(post(SIGN_UP_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonedUserAccount())
@@ -618,6 +623,7 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
                         jsonPath("$.message", Matchers.is(message)),
                         jsonPath("$.validationErrors", hasItem(Matchers.containsString(field))))
                 );
+        verify(userAccountService, never()).registerUserAccount(eq(userAccount), any(HttpServletRequest.class));
     }
 
     private void callEndPointIgnoreNull(String field) throws Exception {
@@ -625,6 +631,7 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
         json = json.replace("\"" + field + "\":null,", "");
         json = json.replace("\"" + field + "\":null", "");
         when(messageSource.getMessage(eq("error.validation"), isNotNull(), any(Locale.class))).thenReturn(message);
+        when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(null);
         mockMvc.perform(post(SIGN_UP_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
@@ -635,5 +642,6 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
                         jsonPath("$.message", Matchers.is(message)),
                         jsonPath("$.validationErrors", hasItem(Matchers.containsString(field))))
                 );
+        verify(userAccountService, never()).registerUserAccount(eq(userAccount), any(HttpServletRequest.class));
     }
 }
