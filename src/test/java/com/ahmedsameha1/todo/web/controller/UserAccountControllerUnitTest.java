@@ -19,12 +19,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.UUID;
 
-import static com.ahmedsameha1.todo.Constants.EMAIL_VERIFICATION_URL;
 import static com.ahmedsameha1.todo.Constants.ErrorCode.USER_EXISTS;
 import static com.ahmedsameha1.todo.Constants.ErrorCode.VALIDATION;
 import static com.ahmedsameha1.todo.Constants.SIGN_UP_URL;
@@ -32,8 +32,8 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.ResultMatcher.matchAll;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
@@ -118,8 +118,49 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
     }
 
     @Test
-    @DisplayName("Should pass because ignorance of UserAccount fields that not allowed to be handled by user input directly")
+    @DisplayName("Should fail because the Http method of the request is unsupported")
     public void SignUp_test5() throws Exception {
+        mockMvc.perform(get(SIGN_UP_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonedUserAccount()).locale(Locale.getDefault()))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(head(SIGN_UP_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonedUserAccount()).locale(Locale.getDefault()))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(put(SIGN_UP_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonedUserAccount()).locale(Locale.getDefault()))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(delete(SIGN_UP_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonedUserAccount()).locale(Locale.getDefault()))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(patch(SIGN_UP_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonedUserAccount()).locale(Locale.getDefault()))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(options(SIGN_UP_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonedUserAccount()).locale(Locale.getDefault()))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(request("TRACE", URI.create(SIGN_UP_URL))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonedUserAccount()).locale(Locale.getDefault()))
+                .andExpect(status().isMethodNotAllowed());
+        mockMvc.perform(request("VIEW", URI.create(SIGN_UP_URL))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonedUserAccount()).locale(Locale.getDefault()))
+                .andExpect(status().isMethodNotAllowed());
+        mockMvc.perform(request(UUID.randomUUID().toString(), URI.create(SIGN_UP_URL))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonedUserAccount()).locale(Locale.getDefault()))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    @DisplayName("Should pass because ignorance of UserAccount fields that not allowed to be handled by user input directly")
+    public void SignUp_test6() throws Exception {
         when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(userAccount);
         var json = jsonedUserAccount().replace("}", ",\"enabled\":true}");
         mockMvc.perform(post(SIGN_UP_URL)
@@ -140,7 +181,7 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
 
     @Test
     @DisplayName("Should pass because ignorance of unknown fields")
-    public void SignUp_test6() throws Exception {
+    public void SignUp_test7() throws Exception {
         when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(userAccount);
         var json = jsonedUserAccount().replace("}", ",\"unknown\":99}");
         mockMvc.perform(post(SIGN_UP_URL)
