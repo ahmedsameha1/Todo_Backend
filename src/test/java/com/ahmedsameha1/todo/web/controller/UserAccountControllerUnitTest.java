@@ -25,9 +25,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.UUID;
 
-import static com.ahmedsameha1.todo.Constants.ErrorCode.USER_EXISTS;
-import static com.ahmedsameha1.todo.Constants.ErrorCode.VALIDATION;
+import static com.ahmedsameha1.todo.Constants.ErrorCode.*;
 import static com.ahmedsameha1.todo.Constants.SIGN_UP_URL;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -50,6 +50,7 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
     private UserAccount userAccount;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String message = "message";
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @BeforeEach
     public void beforeEach() {
@@ -62,8 +63,6 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
         userAccount.setBirthDay(LocalDate.of(2010, 10, 10));
         userAccount.setEmail("user2@user2.com");
     }
-
-    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Test
     @DisplayName("Should pass because the sent request body is a json that represents a valid UserAccount")
@@ -160,8 +159,40 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
     }
 
     @Test
-    @DisplayName("Should pass because ignorance of UserAccount fields that not allowed to be handled by user input directly")
+    @DisplayName("Should fail because there is an unsupported request parameter")
     public void SignUp_test6() throws Exception {
+        when(messageSource.getMessage(eq("error.unsupportedRequestParameter"),
+                isNotNull(), any(Locale.class))).thenReturn(message);
+        mockMvc.perform(post(SIGN_UP_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonedUserAccount())
+                .locale(Locale.getDefault())
+                .param(message, message))
+                .andExpect(matchAll(
+                        status().isBadRequest(),
+                        jsonPath("$.code", Matchers.is((int) UNSUPPORTED_REQUEST_PARAMETER)),
+                        jsonPath("$.message", Matchers.is(message)),
+                        jsonPath("$.validationErrors", hasItem(containsString(message)))
+                ));
+        mockMvc.perform(post(SIGN_UP_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonedUserAccount())
+                .locale(Locale.getDefault())
+                .param(message, message)
+                .param("yyy", "kkk"))
+                .andExpect(matchAll(
+                        status().isBadRequest(),
+                        jsonPath("$.code", Matchers.is((int) UNSUPPORTED_REQUEST_PARAMETER)),
+                        jsonPath("$.message", Matchers.is(message)),
+                        jsonPath("$.validationErrors", hasItem(containsString("yyy"))),
+                        jsonPath("$.validationErrors", hasItem(containsString(message)))
+                ));
+        verify(userAccountService, never()).registerUserAccount(any(), any());
+    }
+
+    @Test
+    @DisplayName("Should pass because ignorance of UserAccount fields that not allowed to be handled by user input directly")
+    public void SignUp_test7() throws Exception {
         when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(userAccount);
         var json = jsonedUserAccount().replace("}", ",\"enabled\":true}");
         mockMvc.perform(post(SIGN_UP_URL)
@@ -182,7 +213,7 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
 
     @Test
     @DisplayName("Should pass because ignorance of unknown fields")
-    public void SignUp_test7() throws Exception {
+    public void SignUp_test8() throws Exception {
         when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(userAccount);
         var json = jsonedUserAccount().replace("}", ",\"unknown\":99}");
         mockMvc.perform(post(SIGN_UP_URL)
