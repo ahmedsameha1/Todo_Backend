@@ -111,4 +111,19 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         });
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(UnsupportedRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleUnsupportedRequestParameterException
+            (UnsupportedRequestParameterException unsupportedRequestParameterException,
+             HttpServletRequest httpServletRequest) {
+        var errorResponse = new ErrorResponse();
+        errorResponse.setCode(UNSUPPORTED_REQUEST_PARAMETER);
+        var message = messageSource.getMessage("error.unsupportedRequestParameter",
+                new Integer[]{unsupportedRequestParameterException.getUnsupportedRequestParameters().size()},
+                httpServletRequest.getLocale());
+        errorResponse.setMessage(message);
+        unsupportedRequestParameterException.getUnsupportedRequestParameters()
+                .forEach(parameter -> errorResponse.getValidationErrors().add(parameter));
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 }
