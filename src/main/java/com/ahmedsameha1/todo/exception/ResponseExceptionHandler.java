@@ -1,10 +1,12 @@
 package com.ahmedsameha1.todo.exception;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
@@ -101,7 +103,6 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         errorResponse.setCode(VALIDATION);
         errorResponse.setMessage(messageSource.getMessage("error.validation",
                 new Integer[]{errors.size()}, request.getLocale()));
-
         errors.forEach(objectError -> {
             if (objectError instanceof FieldError) {
                 errorResponse.getValidationErrors().add(((FieldError) objectError).getField() + ": " + objectError.getDefaultMessage());
@@ -110,6 +111,22 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
             }
         });
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        if (ex.getCause() instanceof JsonMappingException) {
+            var errorResponse = new ErrorResponse();
+            JsonMappingException jsonMappingException = (JsonMappingException) ex.getCause();
+            jsonMappingException.getPath().forEach(reference ->
+                    errorResponse.getValidationErrors().add(reference.getFieldName()));
+            errorResponse.setCode(VALIDATION);
+            errorResponse.setMessage(messageSource.getMessage("error.validation",
+                    new Integer[]{jsonMappingException.getPath().size()}, request.getLocale()));
+            return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+        } else {
+           return super.handleHttpMessageNotReadable(ex, headers, status, request);
+        }
     }
 
     @ExceptionHandler(UnsupportedRequestParameterException.class)
