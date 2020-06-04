@@ -648,6 +648,24 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
         callEndPoint("birthDay");
     }
 
+    @Test
+    @DisplayName("Should fail because the sent body is a json that has gender that isn't valid")
+    public void SignUp_Gender_test1() throws Exception {
+        var json = jsonedUserAccount().replace("MALE", "m");
+        when(messageSource.getMessage(eq("error.validation"), isNotNull(), any(Locale.class))).thenReturn(message);
+        mockMvc.perform(post(SIGN_UP_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .locale(Locale.getDefault()))
+                .andExpect(matchAll(
+                        status().isUnprocessableEntity(),
+                        jsonPath("$.code", Matchers.is((int) VALIDATION)),
+                        jsonPath("$.message", Matchers.is(message)),
+                        jsonPath("$.validationErrors", hasItem(Matchers.containsString("gender"))))
+                );
+        verify(userAccountService, never()).registerUserAccount(any(), any());
+    }
+
     private void BirthDay_callEndpoint(String json) throws Exception {
         when(messageSource.getMessage(eq("error.validation"), isNotNull(), eq(Locale.getDefault()))).thenReturn(message);
         when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(null);
@@ -655,7 +673,7 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .locale(Locale.getDefault()))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
         verify(userAccountService, never()).registerUserAccount(eq(userAccount), any(HttpServletRequest.class));
     }
 
