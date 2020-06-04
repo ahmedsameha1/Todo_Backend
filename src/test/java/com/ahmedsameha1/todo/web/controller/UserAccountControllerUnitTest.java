@@ -234,60 +234,60 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because the sent request body is a json that doesn't have a username")
     public void SignUp_Username_test1() throws Exception {
         userAccount.setUsername(null);
-        callEndPoint("username");
-        callEndPointIgnoreNull("username");
+        callEndpoint("username");
+        callEndpointRemoveNull("username");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has an empty username")
     public void SignUp_Username_test2() throws Exception {
         userAccount.setUsername("");
-        callEndPoint("username");
+        callEndpoint("username");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has a username that contains only whitespace")
     public void SignUp_Username_test3() throws Exception {
         userAccount.setUsername("  ");
-        callEndPoint("username");
+        callEndpoint("username");
         userAccount.setUsername("\n");
-        callEndPoint("username");
+        callEndpoint("username");
         userAccount.setUsername("\r");
-        callEndPoint("username");
+        callEndpoint("username");
         userAccount.setUsername("\t");
-        callEndPoint("username");
+        callEndpoint("username");
         userAccount.setUsername("\t\n");
-        callEndPoint("username");
+        callEndpoint("username");
         userAccount.setUsername("\t\r");
-        callEndPoint("username");
+        callEndpoint("username");
         userAccount.setUsername("\r\n");
-        callEndPoint("username");
+        callEndpoint("username");
         userAccount.setUsername("\r ");
-        callEndPoint("username");
+        callEndpoint("username");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has a username that has more than 50 characters")
     public void SignUp_Username_test4() throws Exception {
         userAccount.setUsername("f".repeat(51));
-        callEndPoint("username");
+        callEndpoint("username");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has a username that has whitespace")
     public void SignUp_Username_test5() throws Exception {
         userAccount.setUsername("t u");
-        callEndPoint("username");
+        callEndpoint("username");
         userAccount.setUsername(" tu");
-        callEndPoint("username");
+        callEndpoint("username");
         userAccount.setUsername("tu ");
-        callEndPoint("username");
+        callEndpoint("username");
         userAccount.setUsername("tu\t");
-        callEndPoint("username");
+        callEndpoint("username");
         userAccount.setUsername("\ntu ");
-        callEndPoint("username");
+        callEndpoint("username");
         userAccount.setUsername("\tt u\r");
-        callEndPoint("username");
+        callEndpoint("username");
     }
 
     @Test
@@ -311,40 +311,40 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because the sent request body is a json that doesn't have a password")
     public void SignUp_Password_test1() throws Exception {
         var json = jsonedUserAccount().replace(",\"password\":\"ffffff3Q\"}", "}");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has password that contains only whitespace")
     public void SignUp_Password_test2() throws Exception {
         var json = jsonedUserAccount().replace("ffffff3Q", "                           ");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "\\t\\t\\n\\t\\t\\t\\t\\n\\t\\t\\t\\t\\t\\t\\t");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "\\t\\t\\t\\t\\t\\t\\t\\n\\t\\t\\t\\t\\n\\t\\t");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "\\t\\t\\t\\t\\t\\t\\t \\t\\t\\t\\t \\t\\t");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has password that contains less than 8 characters")
     public void SignUp_Password_test3() throws Exception {
         var json = jsonedUserAccount().replace("ffffff3Q", "fffff3Q");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has password that contains more than 255 characters")
     public void SignUp_Password_test4() throws Exception {
         var json = jsonedUserAccount().replace("ffffff3Q", "f3Q" + "f".repeat(253));
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
 
     }
 
@@ -352,276 +352,260 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because the sent request body is a json that has password that has whitespace")
     public void SignUp_Password_test5() throws Exception {
         var json = jsonedUserAccount().replace("ffffff3Q", "tuaaaaaa aaaaaaaaaaaa");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", " tupppppppppppppppppppp");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "qqqqqqqqqqqqqqqqqqqqqqqtu ");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "\\rqqqqqqqqqqqqqqqqqqqqqqqqqtu ");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "\\tqqqqqq\\rqqqqqqqqqqqqqqqqqqtu ");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "qqqqqqq\\tqqqqqqqqqqqqqqqtu ");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "\\rqqqqqqqqqqqqqqqqqqqqqqqtu\\n");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body must be a json that has a password that has at least one lowercase character"
             + "and at least one uppercase character"
             + "and at least one digit")
-    public void SignUp_Password_test7() throws Exception {
+    public void SignUp_Password_test6() throws Exception {
         var json = jsonedUserAccount().replace("ffffff3Q", "qqqqqqqqqqqq");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "QQQQQQQQQQQQ");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "333333333333");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "qqqqqqqqqqqqQ");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "qqqqqqqqqqqq3");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "33333333333q");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "33333333333Q");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "QQQQQQQQQQQq");
-        Password_callEndpoint(json);
+        callEndpoint(json, "password");
         json = jsonedUserAccount().replace("ffffff3Q", "QQQQQQQQQQQ3");
-        Password_callEndpoint(json);
-    }
-
-    private void Password_callEndpoint(String json) throws Exception {
-        when(messageSource.getMessage(eq("error.validation"), isNotNull(), eq(Locale.getDefault()))).thenReturn(message);
-        when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(null);
-        mockMvc.perform(post(SIGN_UP_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .locale(Locale.getDefault()))
-                .andExpect(matchAll(
-                        status().isBadRequest(),
-                        jsonPath("$.code", Matchers.is((int) VALIDATION)),
-                        jsonPath("$.message", Matchers.is(message)),
-                        jsonPath("$.validationErrors", hasItem(Matchers.containsString("password"))))
-                );
-        verify(userAccountService, never()).registerUserAccount(eq(userAccount), any(HttpServletRequest.class));
+        callEndpoint(json, "password");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that doesn't has a firstName")
     public void SignUp_FirstName_test1() throws Exception {
         userAccount.setFirstName(null);
-        callEndPoint("firstName");
-        callEndPointIgnoreNull("firstName");
+        callEndpoint("firstName");
+        callEndpointRemoveNull("firstName");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has an empty firstName")
     public void SignUp_FirstName_test2() throws Exception {
         userAccount.setFirstName("");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has a firstName that contains only whitespace")
     public void SignUp_FirstName_test3() throws Exception {
         userAccount.setFirstName("  ");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName("\n");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName("\r");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName("\t");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName("\t\r");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName("\t\n");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName("\t ");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName(" \n");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has a firstName that has more than 100 characters")
     public void SignUp_FirstName_test4() throws Exception {
         userAccount.setFirstName("f".repeat(101));
-        callEndPoint("firstName");
+        callEndpoint("firstName");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has a firstName that has whitespace either at the start or at the end")
     public void SignUp_FirstName_test5() throws Exception {
         userAccount.setFirstName(" fff");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName("fff ");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName("\tfff");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName("fff\t");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName("\nfff");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName("fff\n");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName("\rfff");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName("fff\r");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName("\nfff\r");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
         userAccount.setFirstName(" fff\t");
-        callEndPoint("firstName");
+        callEndpoint("firstName");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that doesn't has a lastName")
     public void SignUp_LastName_test1() throws Exception {
         userAccount.setLastName(null);
-        callEndPoint("lastName");
-        callEndPointIgnoreNull("lastName");
+        callEndpoint("lastName");
+        callEndpointRemoveNull("lastName");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has an empty lastName")
     public void SignUp_LastName_test2() throws Exception {
         userAccount.setLastName("");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has a lastName that contains only whitespace")
     public void SignUp_LastName_test3() throws Exception {
         userAccount.setLastName("  ");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName("\n");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName("\r");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName("\t");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName("\t\r");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName("\t\n");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName("\t ");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName(" \n");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has a lastName that has more than 100 characters")
     public void SignUp_LastName_test4() throws Exception {
         userAccount.setLastName("f".repeat(101));
-        callEndPoint("lastName");
+        callEndpoint("lastName");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has a lastName that has whitespace either at the start or at the end")
     public void SignUp_LastName_test5() throws Exception {
         userAccount.setLastName(" fff");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName("fff ");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName("\tfff");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName("fff\t");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName("\nfff");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName("fff\n");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName("\rfff");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName("fff\r");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName("\nfff\r");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
         userAccount.setLastName(" fff\t");
-        callEndPoint("lastName");
+        callEndpoint("lastName");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that doesn't has an email")
     public void SignUp_Email_test1() throws Exception {
         userAccount.setEmail(null);
-        callEndPoint("email");
-        callEndPointIgnoreNull("email");
+        callEndpoint("email");
+        callEndpointRemoveNull("email");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has an email that contains only whitespace")
     public void SignUp_Email_test2() throws Exception {
         userAccount.setEmail("        ");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("\n\n\n\n\n\n");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("\r\r\r\r\r\r");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("\t\t\t\t\t\t");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("\t\r\t\r\t\t");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("\t\n\t\t\n\t\t");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("\t\t \t \t\t");
-        callEndPoint("email");
+        callEndpoint("email");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has an email that has more than 255 characters")
     public void SignUp_Email_test3() throws Exception {
         userAccount.setEmail("a@a.aa" + "a".repeat(250));
-        callEndPoint("email");
+        callEndpoint("email");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has an email that has whitespace")
     public void SignUp_Email_test4() throws Exception {
         userAccount.setEmail(" a@a.aa");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("a@a.aa ");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail(" a@a .aa  ");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("a\r@a.aa");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("\ta@a.aa");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("a @\na.aa");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("\ra@a.aa\n");
-        callEndPoint("email");
+        callEndpoint("email");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that has an email that doesn't conform to the specified regex")
     public void SignUp_Email_test5() throws Exception {
         userAccount.setEmail("aaaa.aa");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("a@aaaa.");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("a@a.a");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("aaaaaaaa");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("a.a@aa");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail(".aaa@aaa");
-        callEndPoint("email");
+        callEndpoint("email");
         userAccount.setEmail("@aaa.aa");
-        callEndPoint("email");
+        callEndpoint("email");
     }
 
     @Test
     @DisplayName("Should fail because the sent request body is a json that doesn't has a birthDay")
     public void SignUp_BirthDay_test1() throws Exception {
         userAccount.setBirthDay(null);
-        callEndPoint("birthDay");
-        callEndPointIgnoreNull("birthDay");
+        callEndpoint("birthDay");
+        callEndpointRemoveNull("birthDay");
     }
 
     @Test
@@ -643,25 +627,14 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because the sent body is a json that has birthDay that isn't at the past")
     public void SignUp_BirthDay_test3() throws Exception {
         userAccount.setBirthDay(LocalDate.now().plusDays(1));
-        callEndPoint("birthDay");
+        callEndpoint("birthDay");
     }
 
     @Test
     @DisplayName("Should fail because the sent body is a json that has gender that isn't valid")
     public void SignUp_Gender_test1() throws Exception {
         var json = jsonedUserAccount().replace("MALE", "m");
-        when(messageSource.getMessage(eq("error.validation"), isNotNull(), any(Locale.class))).thenReturn(message);
-        mockMvc.perform(post(SIGN_UP_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .locale(Locale.getDefault()))
-                .andExpect(matchAll(
-                        status().isUnprocessableEntity(),
-                        jsonPath("$.code", Matchers.is((int) VALIDATION)),
-                        jsonPath("$.message", Matchers.is(message)),
-                        jsonPath("$.validationErrors", hasItem(Matchers.containsString("gender"))))
-                );
-        verify(userAccountService, never()).registerUserAccount(any(), any());
+        callEndpoint(json, "gender");
     }
 
     private void BirthDay_callEndpoint(String json) throws Exception {
@@ -680,14 +653,14 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
         return json.replace("}", ",\"password\":\"ffffff3Q\"}");
     }
 
-    private void callEndPoint(String field) throws Exception {
+    private void callEndpoint(String field) throws Exception {
         when(messageSource.getMessage(eq("error.validation"), isNotNull(), any(Locale.class))).thenReturn(message);
         mockMvc.perform(post(SIGN_UP_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonedUserAccount())
                 .locale(Locale.getDefault()))
                 .andExpect(matchAll(
-                        status().isBadRequest(),
+                        status().isUnprocessableEntity(),
                         jsonPath("$.code", Matchers.is((int) VALIDATION)),
                         jsonPath("$.message", Matchers.is(message)),
                         jsonPath("$.validationErrors", hasItem(Matchers.containsString(field))))
@@ -695,7 +668,7 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
         verify(userAccountService, never()).registerUserAccount(any(), any());
     }
 
-    private void callEndPointIgnoreNull(String field) throws Exception {
+    private void callEndpointRemoveNull(String field) throws Exception {
         var json = jsonedUserAccount();
         json = json.replace("\"" + field + "\":null,", "");
         json = json.replace("\"" + field + "\":null", "");
@@ -705,11 +678,27 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
                 .content(json)
                 .locale(Locale.getDefault()))
                 .andExpect(matchAll(
-                        status().isBadRequest(),
+                        status().isUnprocessableEntity(),
                         jsonPath("$.code", Matchers.is((int) VALIDATION)),
                         jsonPath("$.message", Matchers.is(message)),
                         jsonPath("$.validationErrors", hasItem(Matchers.containsString(field))))
                 );
         verify(userAccountService, never()).registerUserAccount(any(), any());
+    }
+
+    private void callEndpoint(String json, String field) throws Exception {
+        when(messageSource.getMessage(eq("error.validation"), isNotNull(), eq(Locale.getDefault()))).thenReturn(message);
+        when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(null);
+        mockMvc.perform(post(SIGN_UP_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .locale(Locale.getDefault()))
+                .andExpect(matchAll(
+                        status().isUnprocessableEntity(),
+                        jsonPath("$.code", Matchers.is((int) VALIDATION)),
+                        jsonPath("$.message", Matchers.is(message)),
+                        jsonPath("$.validationErrors", hasItem(Matchers.containsString(field))))
+                );
+        verify(userAccountService, never()).registerUserAccount(eq(userAccount), any(HttpServletRequest.class));
     }
 }

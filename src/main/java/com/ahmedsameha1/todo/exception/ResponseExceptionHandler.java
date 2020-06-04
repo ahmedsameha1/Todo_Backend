@@ -110,7 +110,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                 errorResponse.getValidationErrors().add(objectError.getDefaultMessage());
             }
         });
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @Override
