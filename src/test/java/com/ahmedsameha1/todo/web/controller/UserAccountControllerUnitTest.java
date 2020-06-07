@@ -640,13 +640,20 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
     }
 
     private void BirthDay_callEndpoint(String json) throws Exception {
-        when(messageSource.getMessage(eq("error.validation"), isNotNull(), eq(Locale.getDefault()))).thenReturn(message);
+        var suggestion = "suggestion";
+        when(messageSource.getMessage(eq("error.datetimeValidation"), isNull(), eq(Locale.getDefault()))).thenReturn(message);
+        when(messageSource.getMessage(eq("suggestion.datetimeValidation"), isNull(), eq(Locale.getDefault()))).thenReturn(suggestion);
         when(userAccountService.registerUserAccount(eq(userAccount), any(HttpServletRequest.class))).thenReturn(null);
         mockMvc.perform(post(SIGN_UP_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .locale(Locale.getDefault()))
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(matchAll(
+                        status().isUnprocessableEntity(),
+                        jsonPath("$.code", Matchers.is((int) DATETIME_VALIDATION)),
+                        jsonPath("$.message", Matchers.is(message)),
+                        jsonPath("$.suggestion", Matchers.is(suggestion))
+                ));
         verify(userAccountService, never()).registerUserAccount(eq(userAccount), any(HttpServletRequest.class));
     }
 

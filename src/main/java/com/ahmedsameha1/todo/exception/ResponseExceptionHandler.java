@@ -18,6 +18,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.DateTimeException;
 
 import static com.ahmedsameha1.todo.Constants.ErrorCode.*;
 
@@ -115,14 +116,24 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        if (ex.getCause() instanceof JsonMappingException) {
-            var errorResponse = new ErrorResponse();
-            JsonMappingException jsonMappingException = (JsonMappingException) ex.getCause();
+        var errorResponse = new ErrorResponse();
+        var rootCause = ex.getRootCause();
+        var cause = ex.getCause();
+        cause = rootCause != null? rootCause: cause;
+        if (cause instanceof JsonMappingException) {
+            JsonMappingException jsonMappingException = (JsonMappingException) cause;
             jsonMappingException.getPath().forEach(reference ->
                     errorResponse.getValidationErrors().add(reference.getFieldName()));
             errorResponse.setCode(VALIDATION);
             errorResponse.setMessage(messageSource.getMessage("error.validation",
                     new Integer[]{jsonMappingException.getPath().size()}, request.getLocale()));
+            return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+        } else if (cause instanceof DateTimeException) {
+            errorResponse.setCode(DATETIME_VALIDATION);
+            errorResponse.setMessage(messageSource.getMessage("error.datetimeValidation",
+                    null, request.getLocale()));
+            errorResponse.setSuggestion(messageSource.getMessage("suggestion.datetimeValidation",
+                    null, request.getLocale()));
             return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
         } else {
            return super.handleHttpMessageNotReadable(ex, headers, status, request);
