@@ -16,5 +16,6 @@ public class Constants {
         public static final short VALIDATION = 4;
         public static final short USER_EXISTS = 5;
         public static final short UNSUPPORTED_REQUEST_PARAMETER = 6;
+        public static final short DATETIME_VALIDATION = 7;
     }
 }
