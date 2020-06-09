@@ -5,6 +5,7 @@ import com.ahmedsameha1.todo.security.SignInRequest;
 import com.ahmedsameha1.todo.service.UserAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import java.util.UUID;
 import static com.ahmedsameha1.todo.Constants.*;
 
 @RestController
+@RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
 public class UserAccountController {
     @Autowired
     private UserAccountService userAccountService;
