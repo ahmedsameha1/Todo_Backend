@@ -1,5 +1,6 @@
 package com.ahmedsameha1.todo.exception;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -122,12 +123,20 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         cause = rootCause != null? rootCause: cause;
         if (cause instanceof JsonMappingException) {
             JsonMappingException jsonMappingException = (JsonMappingException) cause;
-            jsonMappingException.getPath().forEach(reference ->
-                    errorResponse.getValidationErrors().add(reference.getFieldName()));
-            errorResponse.setCode(VALIDATION);
-            errorResponse.setMessage(messageSource.getMessage("error.validation",
-                    new Integer[]{jsonMappingException.getPath().size()}, request.getLocale()));
-            return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+            if (jsonMappingException.getPath().isEmpty()) {
+                errorResponse.setCode(REQUEST_BODY_VALIDATION);
+                errorResponse.setMessage(cause.getMessage());
+                errorResponse.setSuggestion(messageSource.getMessage("suggestion.requestBodyValidation",
+                        null, request.getLocale()));
+                return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+            } else {
+                jsonMappingException.getPath().forEach(reference ->
+                        errorResponse.getValidationErrors().add(reference.getFieldName()));
+                errorResponse.setCode(VALIDATION);
+                errorResponse.setMessage(messageSource.getMessage("error.validation",
+                        new Integer[]{jsonMappingException.getPath().size()}, request.getLocale()));
+                return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+            }
         } else if (cause instanceof DateTimeException) {
             errorResponse.setCode(DATETIME_VALIDATION);
             errorResponse.setMessage(messageSource.getMessage("error.datetimeValidation",
@@ -135,6 +144,12 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
             errorResponse.setSuggestion(messageSource.getMessage("suggestion.datetimeValidation",
                     null, request.getLocale()));
             return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+        } else if (cause instanceof JsonParseException) {
+            errorResponse.setCode(REQUEST_BODY_VALIDATION);
+            errorResponse.setMessage(cause.getMessage());
+            errorResponse.setSuggestion(messageSource.getMessage("suggestion.requestBodyValidation",
+                    null, request.getLocale()));
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
         } else {
            return super.handleHttpMessageNotReadable(ex, headers, status, request);
         }
