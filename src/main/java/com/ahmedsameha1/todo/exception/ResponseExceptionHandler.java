@@ -20,8 +20,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.DateTimeException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.ahmedsameha1.todo.Constants.ErrorCode.*;
+import static com.ahmedsameha1.todo.Constants.REGEX_FOR_NON_FULLY_QUALIFIED_CLASS_NAME_MESSAGE;
 
 @RestControllerAdvice
 public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
@@ -125,7 +130,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
             JsonMappingException jsonMappingException = (JsonMappingException) cause;
             if (jsonMappingException.getPath().isEmpty()) {
                 errorResponse.setCode(REQUEST_BODY_VALIDATION);
-                errorResponse.setMessage(cause.getMessage());
+                errorResponse.setMessage(replaceFullClassNameWithSimpleClassName(cause.getMessage()));
                 errorResponse.setSuggestion(messageSource.getMessage("suggestion.requestBodyValidation",
                         null, request.getLocale()));
                 return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
@@ -146,7 +151,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
             return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
         } else if (cause instanceof JsonParseException) {
             errorResponse.setCode(REQUEST_BODY_VALIDATION);
-            errorResponse.setMessage(cause.getMessage());
+            errorResponse.setMessage(replaceFullClassNameWithSimpleClassName(cause.getMessage()));
             errorResponse.setSuggestion(messageSource.getMessage("suggestion.requestBodyValidation",
                     null, request.getLocale()));
             return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
@@ -168,5 +173,25 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         unsupportedRequestParameterException.getUnsupportedRequestParameters()
                 .forEach(parameter -> errorResponse.getValidationErrors().add(parameter));
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    private String replaceFullClassNameWithSimpleClassName(String message) {
+        if (doesContainFullyQualifiedClassName(message)) {
+            Map<String, String> replacements = new HashMap<>();
+            Matcher matcher = Pattern.compile("[a-zA-Z_]\\w*(\\.[a-zA-Z_]\\w*)+").matcher(message);
+            while (matcher.find()) {
+                var fullClassName = message.substring(matcher.start(), matcher.end());
+                var simpleClassName = fullClassName.substring(fullClassName.lastIndexOf(".") + 1);
+                replacements.put(fullClassName, simpleClassName);
+            }
+            for (Map.Entry<String, String> entry: replacements.entrySet()) {
+                message = message.replace(entry.getKey(), entry.getValue());
+            }
+        }
+        return message;
+    }
+
+    private boolean doesContainFullyQualifiedClassName(String message) {
+        return !message.matches(REGEX_FOR_NON_FULLY_QUALIFIED_CLASS_NAME_MESSAGE);
     }
 }
