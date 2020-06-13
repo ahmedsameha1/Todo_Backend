@@ -6,6 +6,7 @@ public class Constants {
     public static final String SIGN_UP_URL = "/sign_up";
     public static final String EMAIL_VERIFICATION_URL = "/email_verification";
     public static final String SIGN_IN_URL = "/sign_in";
+    public static final String REGEX_FOR_NON_FULLY_QUALIFIED_CLASS_NAME_MESSAGE = "(?s)(?!.*[a-zA-Z_]\\w*\\.[a-zA-Z_]\\w*)^\\w.*$";
     public static final byte JWT_TOKEN_EXPIRATION_PERIOD_IN_DAYS = 10;
     public static final byte EMAIL_VERIFICATION_TOKEN_EXPIRATION_PERIOD_IN_DAYS = 1;
 

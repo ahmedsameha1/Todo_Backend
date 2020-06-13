@@ -14,8 +14,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Locale;
 
 import static com.ahmedsameha1.todo.Constants.ErrorCode.REQUEST_BODY_VALIDATION;
+import static com.ahmedsameha1.todo.Constants.REGEX_FOR_NON_FULLY_QUALIFIED_CLASS_NAME_MESSAGE;
 import static com.ahmedsameha1.todo.Constants.SIGN_UP_URL;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
@@ -45,7 +46,7 @@ public class GenericWebControllerTest extends ProductionDatabaseBaseTest {
                 .andExpect(matchAll(
                         status().isBadRequest(),
                         jsonPath("$.code", Matchers.is((int) REQUEST_BODY_VALIDATION)),
-                        jsonPath("$.message", containsString("comma")),
+                        jsonPath("$.message", allOf(containsString("comma"), Matchers.matchesPattern(REGEX_FOR_NON_FULLY_QUALIFIED_CLASS_NAME_MESSAGE))),
                         jsonPath("$.suggestion", Matchers.is(message))
                 ));
     }
@@ -145,7 +146,7 @@ public class GenericWebControllerTest extends ProductionDatabaseBaseTest {
                 .andExpect(matchAll(
                         status().isBadRequest(),
                         jsonPath("$.code", Matchers.is((int) REQUEST_BODY_VALIDATION)),
-                        jsonPath("$.message", Matchers.not(Matchers.blankOrNullString())),
+                        jsonPath("$.message", matchesPattern(REGEX_FOR_NON_FULLY_QUALIFIED_CLASS_NAME_MESSAGE)),
                         jsonPath("$.suggestion", Matchers.is(message))
                 ));
     }
