@@ -2,6 +2,8 @@ package com.ahmedsameha1.todo.exception;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.IgnoredPropertyException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -134,6 +136,15 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                 errorResponse.setSuggestion(messageSource.getMessage("suggestion.requestBodyValidation",
                         null, request.getLocale()));
                 return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+            } else if (cause instanceof UnrecognizedPropertyException
+            || cause instanceof IgnoredPropertyException) {
+                jsonMappingException.getPath().forEach(reference ->
+                        errorResponse.getValidationErrors().add(reference.getFieldName()));
+                errorResponse.setCode(REQUEST_BODY_VALIDATION_UNKNOWN_PROPERTY);
+                errorResponse.setMessage(messageSource.getMessage("error.notAllowedProperties",
+                        new Integer[]{jsonMappingException.getPath().size()}, request.getLocale()));
+                errorResponse.setSuggestion(messageSource.getMessage("suggestion.notAllowedProperties", null, request.getLocale()));
+                return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
             } else {
                 jsonMappingException.getPath().forEach(reference ->
                         errorResponse.getValidationErrors().add(reference.getFieldName()));

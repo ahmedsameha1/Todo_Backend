@@ -38,7 +38,7 @@ public class GenericWebControllerTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because the request body is invalid json. "
             + "There is a missed comma between two entries")
     public void test1() throws Exception {
-        var json = "{\"field1\":1\"field2\":\"value\"}";
+        var json = "{\"firstName\":\"user1\"\"lastName\":\"value\"}";
         when(messageSource.getMessage(eq("suggestion.requestBodyValidation"), isNull(), eq(Locale.getDefault()))).thenReturn(message);
         mockMvc.perform(post(SIGN_UP_URL)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -55,7 +55,7 @@ public class GenericWebControllerTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because the request body is invalid json. "
             + "Missing initial opening brace")
     public void test2() throws Exception {
-        var json = "\"field1\":1,\"field2\":\"value\"}";
+        var json = "\"firstName\":\"user1\",\"lastName\":\"value\"}";
         callEndpoint(json);
     }
 
@@ -63,7 +63,7 @@ public class GenericWebControllerTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because the request body is invalid json. "
             + "Missing double quotation")
     public void test3() throws Exception {
-        var json = "{field1\":1,\"field2\":\"value\"}";
+        var json = "{firstName\":\"user1\",\"lastName\":\"value\"}";
         callEndpoint(json);
     }
 
@@ -71,7 +71,7 @@ public class GenericWebControllerTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because the request body is invalid json. "
             + "Missing colon")
     public void test4() throws Exception {
-        var json = "{\"field1\"1,\"field2\":\"value\"}";
+        var json = "{\"firstName\"\"user1\",\"lastName\":\"value\"}";
         callEndpoint(json);
     }
 
@@ -79,7 +79,7 @@ public class GenericWebControllerTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because the request body is invalid json. "
             + "Starts with [")
     public void test5() throws Exception {
-        var json = "[\"field1\":1,\"field2\":\"value\"}";
+        var json = "[\"firstName\":\"user1\",\"lastName\":\"value\"}";
         callEndpoint(json);
     }
 
@@ -87,7 +87,7 @@ public class GenericWebControllerTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because the request body is invalid json. "
             + "Starts with (")
     public void test6() throws Exception {
-        var json = "(\"field1\":1,\"field2\":\"value\"}";
+        var json = "(\"firstName\":\"user1\",\"lastName\":\"value\"}";
         callEndpoint(json);
     }
 
@@ -95,7 +95,7 @@ public class GenericWebControllerTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because the request body is invalid json. "
             + "Starts with <")
     public void test7() throws Exception {
-        var json = "<\"field1\":1,\"field2\":\"value\"}";
+        var json = "<\"firstName\":\"user1\",\"lastName\":\"value\"}";
         callEndpoint(json);
     }
 
@@ -103,14 +103,14 @@ public class GenericWebControllerTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because the request body is invalid json. "
             + "Missing closing brace")
     public void test8() throws Exception {
-        var json = "{\"field1\":1,\"field2\":\"value\"";
+        var json = "{\"firstName\":\"user1\",\"lastName\":\"value\"";
         callEndpoint(json);
     }
 
     @Test
     @DisplayName("Should fail because the request body is invalid json")
     public void test9() throws Exception {
-        var json = "{\"field1\":1,\"field2\":\"value\"]";
+        var json = "{\"firstName\":\"user1\",\"lastName\":\"value\"]";
         callEndpoint(json);
     }
 
@@ -118,7 +118,7 @@ public class GenericWebControllerTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because the request body is invalid json. "
             + "Missing closing brace")
     public void test10() throws Exception {
-        var json = "{\"field1\":1,\"field2\":\"value\")";
+        var json = "{\"firstName\":\"user1\",\"lastName\":\"value\")";
         callEndpoint(json);
     }
 
@@ -126,7 +126,7 @@ public class GenericWebControllerTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because the request body is invalid json. "
             + "Missing closing brace")
     public void test11() throws Exception {
-        var json = "{\"field1\":1,\"field2\":\"value\">";
+        var json = "{\"firstName\":\"user1\",\"lastName\":\"value\">";
         callEndpoint(json);
     }
 
@@ -134,7 +134,7 @@ public class GenericWebControllerTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because the request body is invalid json. "
             + "Missing closing brace")
     public void test12() throws Exception {
-        var json = "[\"field1\":1,\"field2\":\"value\"]";
+        var json = "[\"firstName\":\"user1\",\"lastName\":\"value\"]";
         callEndpoint(json);
     }
 

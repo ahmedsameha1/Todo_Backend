@@ -19,5 +19,6 @@ public class Constants {
         public static final short UNSUPPORTED_REQUEST_PARAMETER = 6;
         public static final short DATETIME_VALIDATION = 7;
         public static final short REQUEST_BODY_VALIDATION = 8;
+        public static final short REQUEST_BODY_VALIDATION_UNKNOWN_PROPERTY = 9;
     }
 }
