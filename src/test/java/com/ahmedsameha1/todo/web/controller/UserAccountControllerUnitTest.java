@@ -194,7 +194,7 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should fail because there is UserAccount fields that not allowed to be handled by user input directly")
     public void SignUp_test7() throws Exception {
         when(messageSource.getMessage(eq("error.notAllowedProperties"), isNotNull(), eq(Locale.getDefault()))).thenReturn(message);
-        when(messageSource.getMessage(eq("suggestion.notAllowedProperties"), isNull(), eq(Locale.getDefault()))).thenReturn(message);
+        when(messageSource.getMessage(eq("suggestion.notAllowedProperties"), isNotNull(), eq(Locale.getDefault()))).thenReturn(message);
         var json = jsonedUserAccount().replace("}", ",\"enabled\":true}");
         mockMvc.perform(post(SIGN_UP_URL)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -203,8 +203,7 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
                         status().isUnprocessableEntity(),
                         jsonPath("$.code", Matchers.is((int) REQUEST_BODY_VALIDATION_UNKNOWN_PROPERTY)),
                         jsonPath("$.message", Matchers.is(message)),
-                        jsonPath("$.suggestion", Matchers.is(message)),
-                        jsonPath("$.validationErrors", hasItem(containsString("enabled")))
+                        jsonPath("$.suggestion", Matchers.is(message))
                 ));
         verify(userAccountService, never()).registerUserAccount(any(), any());
     }
@@ -213,7 +212,7 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
     @DisplayName("Should pass because ignorance of unknown fields")
     public void SignUp_test8() throws Exception {
         when(messageSource.getMessage(eq("error.notAllowedProperties"), isNotNull(), eq(Locale.getDefault()))).thenReturn(message);
-        when(messageSource.getMessage(eq("suggestion.notAllowedProperties"), isNull(), eq(Locale.getDefault()))).thenReturn(message);
+        when(messageSource.getMessage(eq("suggestion.notAllowedProperties"), isNotNull(), eq(Locale.getDefault()))).thenReturn(message);
         var json = jsonedUserAccount().replace("}", ",\"unknown\":99}");
         mockMvc.perform(post(SIGN_UP_URL)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -222,8 +221,7 @@ class UserAccountControllerUnitTest extends ProductionDatabaseBaseTest {
                         status().isUnprocessableEntity(),
                         jsonPath("$.code", Matchers.is((int) REQUEST_BODY_VALIDATION_UNKNOWN_PROPERTY)),
                         jsonPath("$.message", Matchers.is(message)),
-                        jsonPath("$.suggestion", Matchers.is(message)),
-                        jsonPath("$.validationErrors", hasItem(containsString("unknown")))
+                        jsonPath("$.suggestion", Matchers.is(message))
                 ));
         verify(userAccountService, never()).registerUserAccount(any(), any());
     }

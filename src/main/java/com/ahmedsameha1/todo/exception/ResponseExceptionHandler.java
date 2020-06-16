@@ -138,12 +138,11 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                 return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
             } else if (cause instanceof UnrecognizedPropertyException
             || cause instanceof IgnoredPropertyException) {
-                jsonMappingException.getPath().forEach(reference ->
-                        errorResponse.getValidationErrors().add(reference.getFieldName()));
                 errorResponse.setCode(REQUEST_BODY_VALIDATION_UNKNOWN_PROPERTY);
                 errorResponse.setMessage(messageSource.getMessage("error.notAllowedProperties",
-                        new Integer[]{jsonMappingException.getPath().size()}, request.getLocale()));
-                errorResponse.setSuggestion(messageSource.getMessage("suggestion.notAllowedProperties", null, request.getLocale()));
+                        new String[]{jsonMappingException.getPath().get(0).getFieldName()}, request.getLocale()));
+                errorResponse.setSuggestion(messageSource.getMessage("suggestion.notAllowedProperties",
+                        new String[]{jsonMappingException.getPath().get(0).getFieldName()}, request.getLocale()));
                 return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
             } else {
                 jsonMappingException.getPath().forEach(reference ->
